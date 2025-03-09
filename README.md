@@ -87,3 +87,9 @@ git push origin feature-new-functionality
 📜 License
 
 This project is open-source under the MIT License. Feel free to use, modify, and share responsibly. 🚀
+
+📬 Contact & Community
+
+Join the DeFiMind community and contribute to the future of AI-driven DeFi trading:
+
+Twitter: @aidefimind
