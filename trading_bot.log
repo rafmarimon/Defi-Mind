@@ -1,0 +1,4 @@
+2025-03-09 16:54:21,142 - ai_trading_bot - ERROR - Missing wallet credentials in environment variables
+2025-03-09 16:54:21,142 - ai_trading_bot - ERROR - Error in main execution: Private key and wallet address must be configured
+2025-03-09 18:14:46,087 - ai_trading_bot - ERROR - Missing wallet credentials in environment variables
+2025-03-09 18:14:46,087 - ai_trading_bot - ERROR - Error in main execution: Private key and wallet address must be configured
