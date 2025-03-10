@@ -1,0 +1,23 @@
+2025-03-09 20:09:41,961 - ai_trading_bot - INFO - Scanning all protocols for yield opportunities...
+2025-03-09 20:09:45,203 - ai_trading_bot - WARNING - No valid pools found for traderjoe
+2025-03-09 20:09:49,011 - ai_trading_bot - WARNING - No valid pools found for quickswap
+2025-03-09 20:09:49,011 - ai_trading_bot - INFO - Found 9 opportunities
+2025-03-09 20:09:49,011 - ai_trading_bot - INFO - pancakeswap: WETH-BRETT - APY: 175.22% - TVL: $998,616.00
+2025-03-09 20:09:49,011 - ai_trading_bot - INFO - uniswap: DRB-WETH - APY: 3472.69% - TVL: $1,156,399.00
+2025-03-09 20:09:49,011 - ai_trading_bot - INFO - aave: GHO - APY: 13.81% - TVL: $138,531,426.00
+2025-03-09 20:09:49,011 - ai_trading_bot - INFO - curve: GEAR-ETH - APY: 23.21% - TVL: $1,735,923.00
+2025-03-09 20:09:49,011 - ai_trading_bot - INFO - sushi: SUSHI-WETH - APY: 10.95% - TVL: $2,362,022.00
+2025-03-09 20:09:49,011 - ai_trading_bot - INFO - balancer: USDC-TEL - APY: 27.80% - TVL: $1,643,467.00
+2025-03-09 20:09:49,011 - ai_trading_bot - INFO - compound: USDT - APY: 5.73% - TVL: $1,883,367.00
+2025-03-09 20:09:49,011 - ai_trading_bot - INFO - gmx: BTC-USDC - APY: 47.76% - TVL: $1,950,427.00
+2025-03-09 20:09:49,011 - ai_trading_bot - INFO - velodrome: WETH-FBOMB - APY: 38.86% - TVL: $863,876.00
+2025-03-09 20:09:49,016 - ai_trading_bot - INFO - Report saved to /Users/rafaelmarimon/defi_scanner_data/yield_opportunities_20250309_2009.csv
+2025-03-09 20:16:52,734 - ai_trading_bot - INFO - ✅ Successfully connected to Polygon Mainnet via Infura!
+2025-03-09 20:16:54,373 - ai_trading_bot - WARNING - No valid pools found for traderjoe
+2025-03-09 20:16:55,158 - ai_trading_bot - WARNING - No valid pools found for quickswap
+2025-03-09 20:16:55,243 - ai_trading_bot - INFO - 📊 APYs => Pancake: 100.00%, Joe: 25.00%, QuickSwap: 20.00%
+2025-03-09 20:16:55,243 - ai_trading_bot - INFO - 📉 Market Conditions => Volatility: 0.40, Gas Price: 30.51
+2025-03-09 20:16:55,568 - ai_trading_bot - INFO - 🤖 AI recommended allocations: {'pancakeswap': 0.32514843344688416, 'traderjoe': 0.3367708623409271, 'quickswap': 0.33808067440986633}
+2025-03-09 20:16:55,568 - ai_trading_bot - INFO - 🔄 Rebalancing portfolio with $1000 total investment
+2025-03-09 20:16:55,568 - ai_trading_bot - INFO - 💰 Allocating: {'pancakeswap': 325.14843344688416, 'traderjoe': 336.7708623409271, 'quickswap': 338.08067440986633}
+2025-03-09 20:16:55,568 - ai_trading_bot - INFO - ✅ Final Allocations: {'pancakeswap': 0.32514843344688416, 'traderjoe': 0.3367708623409271, 'quickswap': 0.33808067440986633}
