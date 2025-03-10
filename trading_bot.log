@@ -2,3 +2,48 @@
 2025-03-09 16:54:21,142 - ai_trading_bot - ERROR - Error in main execution: Private key and wallet address must be configured
 2025-03-09 18:14:46,087 - ai_trading_bot - ERROR - Missing wallet credentials in environment variables
 2025-03-09 18:14:46,087 - ai_trading_bot - ERROR - Error in main execution: Private key and wallet address must be configured
+2025-03-09 19:17:15,790 - ai_trading_bot - INFO - Fetching fresh data for pancakeswap
+2025-03-09 19:17:16,692 - ai_trading_bot - INFO - Fetching fresh data for traderjoe
+2025-03-09 19:17:17,313 - ai_trading_bot - INFO - Fetching fresh data for quickswap
+2025-03-09 19:17:17,980 - ai_trading_bot - INFO - APYs => Pancake: 651.37%, Joe: 1981.58%, QuickSwap: 20.00%
+2025-03-09 19:17:17,980 - ai_trading_bot - INFO - Volatility: 0.40, Gas Price: 0.05
+2025-03-09 19:17:18,080 - ai_trading_bot - INFO - AI recommended allocations: {'pancakeswap': 0.5346450209617615, 'traderjoe': 0.23167310655117035, 'quickswap': 0.23368187248706818}
+2025-03-09 19:17:18,080 - ai_trading_bot - INFO - Staking 0.5346450209617615 tokens in pancakeswap
+2025-03-09 19:17:18,369 - ai_trading_bot - ERROR - Error in stake_tokens: ('Address has an invalid EIP-55 checksum. After looking up the address from the original source, try again.', '0xa5f8C5Dbd5F286960b9d90548680aE8290B43e99')
+2025-03-09 19:17:18,369 - ai_trading_bot - ERROR - Failed to stake in pancakeswap: ('Address has an invalid EIP-55 checksum. After looking up the address from the original source, try again.', '0xa5f8C5Dbd5F286960b9d90548680aE8290B43e99')
+2025-03-09 19:17:18,369 - ai_trading_bot - INFO - Staking 0.23167310655117035 tokens in traderjoe
+2025-03-09 19:17:18,369 - ai_trading_bot - ERROR - Contract not found: traderjoe masterchef on bsc
+2025-03-09 19:17:18,369 - ai_trading_bot - ERROR - Error in stake_tokens: Contract configuration not available for traderjoe masterchef
+2025-03-09 19:17:18,369 - ai_trading_bot - ERROR - Failed to stake in traderjoe: Contract configuration not available for traderjoe masterchef
+2025-03-09 19:17:18,369 - ai_trading_bot - INFO - Staking 0.23368187248706818 tokens in quickswap
+2025-03-09 19:17:18,370 - ai_trading_bot - ERROR - Contract not found: quickswap masterchef on bsc
+2025-03-09 19:17:18,370 - ai_trading_bot - ERROR - Error in stake_tokens: Contract configuration not available for quickswap masterchef
+2025-03-09 19:17:18,370 - ai_trading_bot - ERROR - Failed to stake in quickswap: Contract configuration not available for quickswap masterchef
+2025-03-09 19:17:18,370 - ai_trading_bot - INFO - Rebalance complete. New allocations: {'pancakeswap': 0.5346450209617615, 'traderjoe': 0.23167310655117035, 'quickswap': 0.23368187248706818}
+2025-03-09 19:59:07,361 - ai_trading_bot - INFO - ✅ Successfully connected to Polygon Mainnet via Infura!
+2025-03-09 19:59:07,363 - ai_trading_bot - WARNING - Failed to load cache: Expecting value: line 1 column 32 (char 31)
+2025-03-09 19:59:07,437 - ai_trading_bot - INFO - Fetching fresh data for defi_llama_pools
+2025-03-09 19:59:08,379 - ai_trading_bot - WARNING - No valid pools found for traderjoe, returning default
+2025-03-09 19:59:08,391 - ai_trading_bot - WARNING - No valid pools found for quickswap, returning default
+2025-03-09 19:59:08,391 - ai_trading_bot - WARNING - Unusually high PancakeSwap APY: 341.82%, capping at 100%
+2025-03-09 19:59:08,450 - ai_trading_bot - INFO - 📊 APYs => Pancake: 100.00%, Joe: 25.00%, QuickSwap: 20.00%
+2025-03-09 19:59:08,450 - ai_trading_bot - INFO - 📉 Market Conditions => Volatility: 0.40, Gas Price: 26.43
+2025-03-09 19:59:08,566 - ai_trading_bot - INFO - 🤖 AI recommended allocations: {'pancakeswap': 0.009255647659301758, 'traderjoe': 0.48362812399864197, 'quickswap': 0.5071161985397339}
+2025-03-09 19:59:08,566 - ai_trading_bot - INFO - 🔄 Rebalancing portfolio with $1000 total investment
+2025-03-09 19:59:08,566 - ai_trading_bot - INFO - 💰 Allocating: {'pancakeswap': 9.255647659301758, 'traderjoe': 483.62812399864197, 'quickswap': 507.1161985397339}
+2025-03-09 19:59:08,651 - ai_trading_bot - WARNING - No valid pools found for traderjoe, returning default
+2025-03-09 19:59:08,664 - ai_trading_bot - WARNING - No valid pools found for quickswap, returning default
+2025-03-09 19:59:08,664 - ai_trading_bot - INFO - ✅ Final Allocations: {'pancakeswap': 0.009255647659301758, 'traderjoe': 0.48362812399864197, 'quickswap': 0.5071161985397339}
+2025-03-09 20:16:35,267 - ai_trading_bot - INFO - ✅ Successfully connected to Polygon Mainnet via Infura!
+2025-03-09 20:16:35,405 - ai_trading_bot - INFO - Fetching fresh data for defi_llama_pools
+2025-03-09 20:16:36,698 - ai_trading_bot - WARNING - No valid pools found for traderjoe, returning default
+2025-03-09 20:16:36,769 - ai_trading_bot - WARNING - No valid pools found for quickswap, returning default
+2025-03-09 20:16:36,769 - ai_trading_bot - WARNING - Unusually high PancakeSwap APY: 341.82%, capping at 100%
+2025-03-09 20:16:36,898 - ai_trading_bot - INFO - 📊 APYs => Pancake: 100.00%, Joe: 25.00%, QuickSwap: 20.00%
+2025-03-09 20:16:36,898 - ai_trading_bot - INFO - 📉 Market Conditions => Volatility: 0.40, Gas Price: 30.66
+2025-03-09 20:16:36,999 - ai_trading_bot - INFO - 🤖 AI recommended allocations: {'pancakeswap': 0.20105932652950287, 'traderjoe': 0.7983120679855347, 'quickswap': 0.0006285692797973752}
+2025-03-09 20:16:36,999 - ai_trading_bot - INFO - 🔄 Rebalancing portfolio with $1000 total investment
+2025-03-09 20:16:36,999 - ai_trading_bot - INFO - 💰 Allocating: {'pancakeswap': 201.05932652950287, 'traderjoe': 798.3120679855347, 'quickswap': 0.6285692797973752}
+2025-03-09 20:16:37,026 - ai_trading_bot - WARNING - No valid pools found for traderjoe, returning default
+2025-03-09 20:16:37,039 - ai_trading_bot - WARNING - No valid pools found for quickswap, returning default
+2025-03-09 20:16:37,040 - ai_trading_bot - INFO - ✅ Final Allocations: {'pancakeswap': 0.20105932652950287, 'traderjoe': 0.7983120679855347, 'quickswap': 0.0006285692797973752}
