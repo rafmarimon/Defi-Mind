@@ -1,95 +1,127 @@
-📌 Overview
+# Autonomous Agent with Cognitive Architecture
 
-DeFiMind is an open-source, AI-powered DeFi trading bot that automates yield farming across multiple decentralized finance (DeFi) platforms. It continuously scans liquidity pools, analyzes APYs, and dynamically stakes/unstakes assets to maximize returns with minimal human intervention.
+This project implements an autonomous agent with a cognitive architecture, designed to think and act on its own. The initial implementation focuses on DeFi yield analysis and trading decisions, but the architecture can be adapted for various autonomous applications.
 
-🌟 Features
+## 🧠 Architecture Overview
 
-✅ AI-Driven Strategy – Uses a neural network to optimize staking and yield farming.✅ Automated DeFi Interactions – Trades across platforms like PancakeSwap, Trader Joe, and QuickSwap.✅ Multi-Chain Support – Compatible with Ethereum, BSC, Polygon, and Avalanche.✅ Real-Time Market Data – Fetches APY and gas fee info from DefiLlama & Covalent APIs.✅ Smart Gas Management – Reduces transaction costs by adjusting execution timing.✅ Secure Wallet Management – Uses environment variables to protect private keys.✅ Open Source & Extensible – Designed for community collaboration and enhancements.
+The agent consists of several cognitive components that work together to create an intelligent, autonomous system:
 
-📦 Installation & Setup
+1. **Memory System**: Multi-layered memory including short-term, long-term, and episodic memory
+2. **Perception Module**: Processes raw observations into structured representations
+3. **Reasoning Engine**: Makes decisions using rule-based logic or LLM assistance
+4. **Action System**: Executes decisions and interacts with the environment
+5. **Reflection Loop**: Periodically reviews experiences and consolidates memories
 
-1️⃣ Clone the Repository
+![Agent Architecture](https://mermaid.ink/img/pako:eNp1kc1OwzAQhF9l5XMr9Q04IKCqkBAqpygnywkm8TZ2ZduVlIK8O-tQUH9Evcz8O17PXtkJK5oxG7JLrAK1j7WzkrxjF9kCIYwxcIgRrwRd0A38u24gZYvOpTQk1kMnFnN2uFu0HTz2uLVYwLUv4IZcFQK1iR0YpXwrELVTgMXoDkY4PYYyumIIRF7OoL6Y0e4zdWgxQcUBTw2_4UR-wBvDp78_-JKRZXOGq8RqJ6ug-0ZTLCr4PHzL7H8Z0aZ0MCrCE44Jd6lXVHkUb-Z1V0_2WrfrtrcFbXZ1UzXr5q669_tVs51W93W1aTfr5dP6dlPOhR1kkvPCFuLTaGUHzwYoaR4qS1l4OYyf49Cx4XwKCkvOtx6zrQQ15p91B9Kh1V0xIlMWL0XO3yyp2XCqbF4qmzObLXOq-OkBo8zGSvTsbHjH3m8dOY13)
 
-git clone https://github.com/yourusername/DeFiMind.git
-cd DeFiMind
+## 🚀 Getting Started
 
-2️⃣ Create a Virtual Environment (Recommended)
+### Prerequisites
 
+- Python 3.8+
+- MacOS (tested on MacBook Pro)
+- Optional: OpenAI API key for LLM-powered reasoning
+
+### Installation
+
+1. Clone the repository:
+```bash
+git clone https://github.com/yourusername/autonomous-agent.git
+cd autonomous-agent
+```
+
+2. Create and activate a virtual environment:
+```bash
 python -m venv venv
-source venv/bin/activate   # On Mac/Linux
-venv\Scripts\activate    # On Windows
+source venv/bin/activate
+```
 
-3️⃣ Install Dependencies
-
+3. Install dependencies:
+```bash
 pip install -r requirements.txt
+```
 
-4️⃣ Configure Environment Variables
+4. Configure environment variables:
+```bash
+cp .env.example .env
+```
 
-Create a .env file in the root directory and add:
+5. Edit the `.env` file and add your API keys:
+```
+OPENAI_API_KEY=your_openai_api_key
+INFURA_RPC_URL=your_infura_rpc_url
+```
 
-PRIVATE_KEY=0xYourPrivateKeyHere
-WALLET_ADDRESS=0xYourWalletAddressHere
-BSC_RPC_URL=https://data-seed-prebsc-1-s1.binance.org:8545
-POLYGON_RPC_URL=https://rpc-mumbai.maticvigil.com
+### Running the Agent
 
-🚨 Never share your private key! Only use wallets with test funds for security.
+To run the autonomous agent:
 
-5️⃣ Run the AI Agent
+```bash
+python autonomous_agent_main.py
+```
 
-python ai_agent.py
+### Configuration
 
-The bot will fetch APY data, predict optimal allocations, and stake/unstake funds accordingly.
+You can configure the agent's behavior by modifying these files:
 
-🛠️ How It Works
+- `autonomous_agent_main.py`: Main entry point and configuration
+- `agent_brain.py`: Cognitive architecture components
+- `.env`: API keys and environment variables
 
-1️⃣ AI Model (Decision Making)
+## 🛠️ Core Components
 
-Uses TensorFlow to analyze APY trends and market conditions.
+### AutonomousAgent
 
-Predicts optimal fund allocation among DeFi protocols.
+The main agent class that integrates all cognitive components. Key methods:
 
-2️⃣ Yield Scanner (Data Collection)
+- `set_goals()`: Define the agent's objectives
+- `observe()`: Process observations from the environment
+- `think()`: Reason about the current state and decide on actions
+- `act()`: Execute actions based on decisions
+- `sense_think_act_cycle()`: Run one complete cognitive cycle
+- `start()/stop()`: Control the agent's operation
 
-Fetches real-time APY data from DefiLlama.
+### Memory System
 
-Monitors gas fees to optimize transaction costs.
+Multi-layered memory structure:
 
-3️⃣ Blockchain Integration
+- **Short-term memory**: Recent observations and thoughts
+- **Long-term memory**: Important knowledge and experiences
+- **Episodic memory**: Complete sequences of agent interactions
 
-Uses Web3.py to interact with smart contracts.
+### Reasoning Engine
 
-Supports staking/unstaking via MasterChef contracts.
+Decision-making system with multiple reasoning methods:
 
-4️⃣ Auto-Execution
+- **LLM-powered reasoning**: Uses OpenAI's models for complex decisions
+- **Rule-based reasoning**: Fallback for when LLM is unavailable
+- **Model-based reasoning**: Can use a TensorFlow model for predictions
 
-The bot rebalances weekly, ensuring optimal yield allocation.
+## 🤝 Integration with Existing Systems
 
-🤝 Contributing
+The agent is designed to integrate with your existing AI trading components:
 
-We welcome contributions from the community! 🚀
+- Works with your `YieldScanner` and `TradingBot` classes
+- Augments decision-making with cognitive capabilities
+- Maintains memory of past interactions and learning
 
-Steps to Contribute
+## 📊 Extending the Agent
 
-Fork the Repository
+To extend the agent for different domains:
 
-Create a New Branch
+1. Modify the `Perception` class to handle your specific data types
+2. Update the rule-based decision logic in `Reasoning._rule_based_decision()`
+3. Add new action types in the `execute_recommendation()` method
+4. Customize the goals in `set_goals()` to match your objectives
 
-git checkout -b feature-new-functionality
+## 📝 License
 
-Make Your Changes & Commit
+This project is licensed under the MIT License - see the LICENSE file for details.
 
-git commit -m "Added new feature XYZ"
+## 🔮 Future Enhancements
 
-Push to Your Fork & Submit a Pull Request
-
-git push origin feature-new-functionality
-
-📜 License
-
-This project is open-source under the MIT License. Feel free to use, modify, and share responsibly. 🚀
-
-📬 Contact & Community
-
-Join the DeFiMind community and contribute to the future of AI-driven DeFi trading:
-
-Twitter: @aidefimind
+- Vectorized memory with semantic search capabilities
+- Reinforcement learning for adaptive decision-making
+- Integration with more data sources
+- Multi-agent collaboration capabilities
+- Natural language command interface
