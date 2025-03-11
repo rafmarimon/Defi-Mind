@@ -15,8 +15,8 @@ import numpy as np
 import pandas as pd
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
-from live_data_fetcher import LiveDataFetcher
-from defimind_persistence import MarketDataStore, MemoryDatabase
+from core.live_data_fetcher import LiveDataFetcher
+from core.defimind_persistence import MarketDataStore, MemoryDatabase
 
 # Configure logging
 logging.basicConfig(

@@ -19,7 +19,7 @@ from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
 from sklearn.linear_model import Ridge
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
-from defimind_persistence import MemoryDatabase, MarketDataStore, ModelManager
+from core.defimind_persistence import MemoryDatabase, MarketDataStore, ModelManager
 
 # Configure logging
 logging.basicConfig(

@@ -22,7 +22,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
 # Import persistence layer for storing the data
-from defimind_persistence import MemoryDatabase, MarketDataStore
+from core.defimind_persistence import MemoryDatabase, MarketDataStore
 
 # Load environment variables
 load_dotenv()

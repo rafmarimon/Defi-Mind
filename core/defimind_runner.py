@@ -18,11 +18,11 @@ from datetime import datetime, timedelta
 from dotenv import load_dotenv
 
 # Import DEFIMIND components
-from live_data_fetcher import LiveDataFetcher, run_continuous_data_collection
-from trading_strategy import YieldOptimizer, MultiStrategyAllocator
-from protocol_analytics import ProtocolAnalyzer, run_protocol_analysis
-from machine_learning import ModelTrainer, PortfolioOptimizer, run_model_training
-from defimind_persistence import MemoryDatabase, MarketDataStore
+from core.live_data_fetcher import LiveDataFetcher, run_continuous_data_collection
+from core.trading_strategy import YieldOptimizer, MultiStrategyAllocator
+from core.protocol_analytics import ProtocolAnalyzer, run_protocol_analysis
+from core.machine_learning import ModelTrainer, PortfolioOptimizer, run_model_training
+from core.defimind_persistence import MemoryDatabase, MarketDataStore
 
 # Configure logging
 logging.basicConfig(
