@@ -14,6 +14,7 @@ Incorporates industry best practices:
 import asyncio
 import time
 import os
+import random
 from datetime import datetime, timedelta
 import numpy as np
 import pandas as pd
@@ -22,7 +23,7 @@ import plotly.express as px
 import sys
 sys.path.append('.')  # Ensure local imports work
 try:
-    from pyth_searcher import PythSearcher, Opportunity, run_pyth_searcher_demo
+    from core.pyth_searcher import PythSearcher, Opportunity, run_pyth_searcher_demo
     PYTH_AVAILABLE = True
 except ImportError:
     PYTH_AVAILABLE = False
@@ -35,7 +36,7 @@ except ImportError:
 
 # If you have an LLM or LangChain:
 try:
-    from langchain_agent import LangChainAgent  # Example; replace with actual
+    from core.langchain_agent import LangChainAgent  # Example; replace with actual
     LANGCHAIN_AVAILABLE = True
 except ImportError:
     LANGCHAIN_AVAILABLE = False
@@ -307,7 +308,7 @@ def page_agent_chat():
         agent_reply = get_ai_agent_response(user_input, context=context_data)
         st.session_state.chat_history.append(("agent", agent_reply))
 
-        st.experimental_rerun()
+        st.rerun()
 
 
 # Add a new function to render the Pyth searcher section

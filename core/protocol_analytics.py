@@ -15,8 +15,8 @@ import pandas as pd
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
 from web3 import Web3
-from live_data_fetcher import LiveDataFetcher
-from defimind_persistence import MarketDataStore
+from core.live_data_fetcher import LiveDataFetcher
+from core.defimind_persistence import MarketDataStore
 
 # Configure logging
 logging.basicConfig(

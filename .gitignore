@@ -157,3 +157,6 @@ production_config.json
 deployment_keys/
 *_credentials.json
 deploy_config.py
+
+# Archived files
+archive/
