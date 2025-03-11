@@ -1,127 +1,181 @@
-# Autonomous Agent with Cognitive Architecture
+# DEFIMIND Autonomous Trading Agent
 
-This project implements an autonomous agent with a cognitive architecture, designed to think and act on its own. The initial implementation focuses on DeFi yield analysis and trading decisions, but the architecture can be adapted for various autonomous applications.
+DEFIMIND is an AI-powered autonomous trading agent for DeFi markets, providing data collection, analysis, and investment recommendations based on real-time blockchain data.
 
-## 🧠 Architecture Overview
+## Overview
 
-The agent consists of several cognitive components that work together to create an intelligent, autonomous system:
+DEFIMIND combines blockchain data from Alchemy API with protocol-specific analytics, machine learning models, and trading strategies to make informed DeFi investment decisions. The system learns from past performance and market conditions to continuously improve its recommendations.
 
-1. **Memory System**: Multi-layered memory including short-term, long-term, and episodic memory
-2. **Perception Module**: Processes raw observations into structured representations
-3. **Reasoning Engine**: Makes decisions using rule-based logic or LLM assistance
-4. **Action System**: Executes decisions and interacts with the environment
-5. **Reflection Loop**: Periodically reviews experiences and consolidates memories
+### Key Features
 
-![Agent Architecture](https://mermaid.ink/img/pako:eNp1kc1OwzAQhF9l5XMr9Q04IKCqkBAqpygnywkm8TZ2ZduVlIK8O-tQUH9Evcz8O17PXtkJK5oxG7JLrAK1j7WzkrxjF9kCIYwxcIgRrwRd0A38u24gZYvOpTQk1kMnFnN2uFu0HTz2uLVYwLUv4IZcFQK1iR0YpXwrELVTgMXoDkY4PYYyumIIRF7OoL6Y0e4zdWgxQcUBTw2_4UR-wBvDp78_-JKRZXOGq8RqJ6ug-0ZTLCr4PHzL7H8Z0aZ0MCrCE44Jd6lXVHkUb-Z1V0_2WrfrtrcFbXZ1UzXr5q669_tVs51W93W1aTfr5dP6dlPOhR1kkvPCFuLTaGUHzwYoaR4qS1l4OYyf49Cx4XwKCkvOtx6zrQQ15p91B9Kh1V0xIlMWL0XO3yyp2XCqbF4qmzObLXOq-OkBo8zGSvTsbHjH3m8dOY13)
+- **Live Blockchain Data**: Real-time data from Ethereum, Polygon, and other chains
+- **Protocol Analytics**: Deep analysis of major DeFi protocols like Aave, Uniswap, and Compound
+- **Machine Learning**: Predictive models for yield and risk assessment
+- **Multi-Strategy Trading**: Combines different trading approaches for optimal allocation
+- **Web Dashboard**: Visual monitoring of data, analysis, and recommendations
+- **Continuous Learning**: Models that evolve with market conditions
 
-## 🚀 Getting Started
+## Components
+
+The system consists of several key components:
+
+1. **Live Data Fetcher** (`live_data_fetcher.py`): Collects data from blockchain nodes, DeFi protocols, and APIs
+2. **Trading Strategy** (`trading_strategy.py`): Implements various investment strategies and portfolio allocation
+3. **Protocol Analytics** (`protocol_analytics.py`): Analyzes specific DeFi protocols in depth
+4. **Machine Learning** (`machine_learning.py`): Trains and runs predictive models
+5. **Persistence Layer** (`defimind_persistence.py`): Stores data, models, and decisions
+6. **Dashboard** (`dashboard.py`): Web interface for monitoring and control
+7. **Runner** (`defimind_runner.py`): Orchestrates all components
+
+## Installation
 
 ### Prerequisites
 
-- Python 3.8+
-- MacOS (tested on MacBook Pro)
-- Optional: OpenAI API key for LLM-powered reasoning
+- Python 3.10+
+- Alchemy API key (for blockchain data)
+- CoinGecko API key (optional, for market data)
 
-### Installation
+### Setup
 
 1. Clone the repository:
-```bash
-git clone https://github.com/yourusername/autonomous-agent.git
-cd autonomous-agent
-```
+   ```
+   git clone https://github.com/yourusername/defimind.git
+   cd defimind
+   ```
 
 2. Create and activate a virtual environment:
-```bash
-python -m venv venv
-source venv/bin/activate
-```
+   ```
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   ```
 
 3. Install dependencies:
-```bash
-pip install -r requirements.txt
+   ```
+   pip install -r requirements.txt
+   ```
+
+4. Create a `.env` file with your configuration:
+   ```
+   # API Keys
+   ALCHEMY_API_KEY=your_alchemy_api_key
+   
+   # Configuration
+   SIMULATION_MODE=false
+   AGENT_CYCLE_INTERVAL=20
+   TOTAL_INVESTMENT=100
+   MAX_SINGLE_PROTOCOL_ALLOCATION=0.5
+   RISK_TOLERANCE=0.6
+   
+   # LLM Configuration (optional)
+   OPENROUTER_API_KEY=your_openrouter_api_key
+   LLM_PROVIDER=openrouter
+   ```
+
+## Usage
+
+### Running the Full Agent
+
+```
+# Run once
+python defimind_runner.py run_once
+
+# Run continuously
+python defimind_runner.py run
+
+# Run only the dashboard
+python defimind_runner.py dashboard
 ```
 
-4. Configure environment variables:
-```bash
-cp .env.example .env
+### Running Individual Components
+
+```
+# Run data collection only
+python defimind_runner.py data
+
+# Run protocol analytics only
+python defimind_runner.py analytics
+
+# Run trading strategy only
+python defimind_runner.py strategy
+
+# Run model training only
+python defimind_runner.py models
 ```
 
-5. Edit the `.env` file and add your API keys:
+### Accessing the Dashboard
+
+Once started, the dashboard is available at:
 ```
-OPENAI_API_KEY=your_openai_api_key
-INFURA_RPC_URL=your_infura_rpc_url
-```
-
-### Running the Agent
-
-To run the autonomous agent:
-
-```bash
-python autonomous_agent_main.py
+http://localhost:8501
 ```
 
-### Configuration
+## System Architecture
 
-You can configure the agent's behavior by modifying these files:
+```
+┌─────────────────┐         ┌─────────────────┐
+│                 │         │                 │
+│  Blockchain     │         │  Market Data    │
+│  (Alchemy API)  │◄────────┤  APIs           │
+│                 │         │                 │
+└────────┬────────┘         └────────┬────────┘
+         │                           │
+         ▼                           ▼
+┌─────────────────────────────────────────────┐
+│                                             │
+│            Live Data Fetcher                │
+│                                             │
+└───────────────────┬─────────────────────────┘
+                    │
+                    ▼
+┌─────────────────────────────────────────────┐
+│                                             │
+│               Persistence Layer             │
+│                                             │
+└───┬─────────────────┬──────────────────┬────┘
+    │                 │                  │
+    ▼                 ▼                  ▼
+┌────────────┐   ┌────────────┐    ┌────────────┐
+│            │   │            │    │            │
+│ Protocol   │   │ Machine    │    │ Trading    │
+│ Analytics  │   │ Learning   │    │ Strategy   │
+│            │   │            │    │            │
+└────┬───────┘   └────┬───────┘    └────┬───────┘
+     │                │                 │
+     └────────────────┼─────────────────┘
+                      │
+                      ▼
+             ┌────────────────┐
+             │                │
+             │   Dashboard    │
+             │                │
+             └────────────────┘
+```
 
-- `autonomous_agent_main.py`: Main entry point and configuration
-- `agent_brain.py`: Cognitive architecture components
-- `.env`: API keys and environment variables
+## Configuration
 
-## 🛠️ Core Components
+### Environment Variables
 
-### AutonomousAgent
+| Variable                        | Description                                  | Default |
+|---------------------------------|----------------------------------------------|---------|
+| `ALCHEMY_API_KEY`               | Alchemy API key                              | -       |
+| `SIMULATION_MODE`               | Run in simulation mode without transactions  | true    |
+| `AGENT_CYCLE_INTERVAL`          | Time between agent cycles (minutes)          | 20      |
+| `TOTAL_INVESTMENT`              | Total investment amount                      | 100     |
+| `MAX_SINGLE_PROTOCOL_ALLOCATION`| Maximum allocation to a single protocol      | 0.5     |
+| `RISK_TOLERANCE`                | Risk tolerance (0-1)                         | 0.6     |
+| `DATA_COLLECTION_INTERVAL_MINUTES` | Data collection frequency                | 15      |
+| `MODEL_TRAINING_INTERVAL_HOURS` | Model retraining frequency                   | 24      |
 
-The main agent class that integrates all cognitive components. Key methods:
+## Contributing
 
-- `set_goals()`: Define the agent's objectives
-- `observe()`: Process observations from the environment
-- `think()`: Reason about the current state and decide on actions
-- `act()`: Execute actions based on decisions
-- `sense_think_act_cycle()`: Run one complete cognitive cycle
-- `start()/stop()`: Control the agent's operation
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-### Memory System
-
-Multi-layered memory structure:
-
-- **Short-term memory**: Recent observations and thoughts
-- **Long-term memory**: Important knowledge and experiences
-- **Episodic memory**: Complete sequences of agent interactions
-
-### Reasoning Engine
-
-Decision-making system with multiple reasoning methods:
-
-- **LLM-powered reasoning**: Uses OpenAI's models for complex decisions
-- **Rule-based reasoning**: Fallback for when LLM is unavailable
-- **Model-based reasoning**: Can use a TensorFlow model for predictions
-
-## 🤝 Integration with Existing Systems
-
-The agent is designed to integrate with your existing AI trading components:
-
-- Works with your `YieldScanner` and `TradingBot` classes
-- Augments decision-making with cognitive capabilities
-- Maintains memory of past interactions and learning
-
-## 📊 Extending the Agent
-
-To extend the agent for different domains:
-
-1. Modify the `Perception` class to handle your specific data types
-2. Update the rule-based decision logic in `Reasoning._rule_based_decision()`
-3. Add new action types in the `execute_recommendation()` method
-4. Customize the goals in `set_goals()` to match your objectives
-
-## 📝 License
+## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
-## 🔮 Future Enhancements
+## Acknowledgments
 
-- Vectorized memory with semantic search capabilities
-- Reinforcement learning for adaptive decision-making
-- Integration with more data sources
-- Multi-agent collaboration capabilities
-- Natural language command interface
+- Alchemy API for blockchain data access
+- DeFi Llama for yield data
+- CoinGecko for market data

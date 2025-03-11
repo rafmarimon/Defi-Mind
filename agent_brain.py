@@ -8,10 +8,15 @@ from datetime import datetime
 from collections import deque
 import tensorflow as tf
 import openai
+import requests
 from dotenv import load_dotenv
+import re
 
 # Load environment variables
 load_dotenv()
+
+# Get agent configuration
+AGENT_HOME = os.getenv("AGENT_HOME", "DEFIMIND")
 
 # Configure logging
 logging.basicConfig(
@@ -31,6 +36,20 @@ if OPENAI_API_KEY:
     logger.info("✅ OpenAI API key loaded")
 else:
     logger.warning("⚠️ OpenAI API key not found. LLM reasoning disabled.")
+
+# Set up LLM API configuration
+LLM_PROVIDER = os.getenv("LLM_PROVIDER", "openai").lower()
+if LLM_PROVIDER == "openai" and os.getenv("OPENAI_API_KEY"):
+    openai.api_key = os.getenv("OPENAI_API_KEY")
+    logger.info("✅ OpenAI API initialized for reasoning")
+    USE_LLM = True
+elif LLM_PROVIDER == "openrouter" and os.getenv("OPENROUTER_API_KEY"):
+    OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
+    logger.info("✅ Openrouter API initialized for reasoning")
+    USE_LLM = True
+else:
+    logger.warning("⚠️ No LLM API configured. LLM reasoning disabled.")
+    USE_LLM = False
 
 class Memory:
     """Short and long-term memory for the agent"""
@@ -151,8 +170,9 @@ class Reasoning:
     """Decision-making module of the agent"""
     
     def __init__(self, use_llm=False):
-        self.use_llm = use_llm and OPENAI_API_KEY is not None
+        self.use_llm = use_llm and USE_LLM
         self.model = None
+        self.llm_provider = LLM_PROVIDER
         
     def load_model(self, model_path=None):
         """Load a TensorFlow model for decision-making"""
@@ -170,20 +190,59 @@ class Reasoning:
             return {"error": "LLM reasoning not available"}
             
         try:
-            response = openai.chat.completions.create(
-                model="gpt-3.5-turbo-0125",
-                messages=[
-                    {"role": "system", "content": system},
-                    {"role": "user", "content": prompt}
-                ],
-                max_tokens=500,
-                temperature=0.7
-            )
-            return {
-                "reasoning": response.choices[0].message.content,
-                "model": "gpt-3.5-turbo-0125",
-                "tokens": response.usage.total_tokens
-            }
+            if self.llm_provider == "openai":
+                # OpenAI API
+                response = openai.chat.completions.create(
+                    model="gpt-3.5-turbo-0125",
+                    messages=[
+                        {"role": "system", "content": system + f" You operate within {AGENT_HOME}, a sophisticated DeFi investment platform."},
+                        {"role": "user", "content": prompt}
+                    ],
+                    max_tokens=500,
+                    temperature=0.7
+                )
+                return {
+                    "reasoning": response.choices[0].message.content,
+                    "model": "gpt-3.5-turbo-0125",
+                    "tokens": response.usage.total_tokens
+                }
+            elif self.llm_provider == "openrouter":
+                # Openrouter API
+                headers = {
+                    "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+                    "Content-Type": "application/json",
+                    "HTTP-Referer": "https://github.com/rafmarimon/DefiMind",
+                }
+                
+                data = {
+                    "model": "deepseek-ai/deepseek-coder",  # Can be configured based on preference
+                    "messages": [
+                        {"role": "system", "content": system + f" You operate within {AGENT_HOME}, a sophisticated DeFi investment platform."},
+                        {"role": "user", "content": prompt}
+                    ],
+                    "max_tokens": 500,
+                    "temperature": 0.7
+                }
+                
+                response = requests.post(
+                    "https://openrouter.ai/api/v1/chat/completions",
+                    headers=headers,
+                    json=data
+                )
+                
+                if response.status_code == 200:
+                    resp_json = response.json()
+                    return {
+                        "reasoning": resp_json["choices"][0]["message"]["content"],
+                        "model": resp_json["model"],
+                        "tokens": resp_json.get("usage", {}).get("total_tokens", 0)
+                    }
+                else:
+                    logger.error(f"❌ Openrouter API error: {response.text}")
+                    return {"error": f"Openrouter API error: {response.status_code}"}
+            else:
+                return {"error": "Unknown LLM provider"}
+                
         except Exception as e:
             logger.error(f"❌ LLM reasoning error: {e}")
             return {"error": str(e)}
@@ -196,22 +255,42 @@ class Reasoning:
         # Complex situation requiring LLM reasoning
         if should_use_llm:
             prompt = f"""
-Current Perception:
+# Investment Analysis Task
+
+## Current Market Data:
 {json.dumps(perception, indent=2)}
 
-Recent Memory Items:
+## Recent Portfolio History:
 {json.dumps(list(memory.short_term)[-3:], indent=2)}
 
-Agent's Goals:
+## Investment Goals:
 {json.dumps(goals, indent=2)}
 
-Based on the information above, what action should the agent take next?
-Provide your reasoning and specific action recommendation.
+## Analysis Instructions:
+1. Analyze the current APY rates across all protocols.
+2. Identify the highest-performing opportunities with consideration for risk.
+3. Determine if any existing positions should be exited (for profit-taking or loss mitigation).
+4. Calculate optimal allocation across protocols to maximize returns while managing risk.
+5. Consider gas costs for any rebalancing actions.
+
+## Required Decision:
+Based on this analysis, what specific action should be taken? Consider these options:
+- MAINTAIN_POSITIONS: Keep current allocations if they remain optimal
+- REBALANCE: Provide specific new allocation percentages across protocols
+- TAKE_PROFITS: Exit specific positions that have reached profit targets
+- REDUCE_RISK: Move capital to safer positions due to market conditions
+- INCREASE_EXPOSURE: Allocate more capital to high-performing opportunities
+
+Provide your investment banking analysis and a clear recommendation with allocation percentages.
 """
-            llm_response = self.llm_reasoning(prompt)
+            llm_response = self.llm_reasoning(prompt, 
+                system="You are an elite DeFi investment banker AI that analyzes market data and makes optimal allocation decisions. Your recommendations must be specific, data-driven, and focused on maximizing returns while managing risk.")
+            
             if "error" not in llm_response:
+                action_decision = self._extract_investment_decision(llm_response["reasoning"])
                 return {
-                    "action": self._extract_action(llm_response["reasoning"]),
+                    "action": action_decision["action"],
+                    "allocations": action_decision.get("allocations", {}),
                     "reasoning": llm_response["reasoning"],
                     "method": "llm"
                 }
@@ -219,47 +298,126 @@ Provide your reasoning and specific action recommendation.
         # Fallback to rule-based reasoning
         return self._rule_based_decision(perception, memory, goals)
         
-    def _rule_based_decision(self, perception, memory, goals):
-        """Simple rule-based decision making as fallback"""
-        # This would be expanded with actual domain-specific rules
-        
-        # Example for trading domain
-        if "market_data" in perception:
-            if perception["market_data"].get("volatility", 0) > 0.5:
-                return {
-                    "action": "reduce_risk",
-                    "confidence": 0.8,
-                    "reasoning": "High market volatility detected",
-                    "method": "rule_based"
-                }
-                
-        # Default response if no rules match
-        return {
+    def _extract_investment_decision(self, llm_text):
+        """Extract structured investment decision from LLM text response"""
+        # Default response if parsing fails
+        default_response = {
             "action": "gather_more_information",
-            "confidence": 0.3,
-            "reasoning": "Insufficient information for confident decision",
-            "method": "rule_based"
+            "allocations": {}
         }
         
-    def _extract_action(self, llm_text):
-        """Extract structured action from LLM text response"""
-        # This is a simplified implementation
-        # A more sophisticated version would do better parsing
+        # Look for specific action recommendations
+        action_mapping = {
+            "MAINTAIN_POSITIONS": "maintain_positions",
+            "REBALANCE": "reallocate_portfolio",
+            "TAKE_PROFITS": "take_profits",
+            "REDUCE_RISK": "reduce_risk",
+            "INCREASE_EXPOSURE": "increase_exposure"
+        }
         
-        if "recommend" in llm_text.lower() and ":" in llm_text:
-            parts = llm_text.split(":")
-            for part in parts:
-                if "recommend" in part.lower():
-                    return parts[parts.index(part) + 1].strip()
-                    
-        # Default extraction - last paragraph, first sentence
-        paragraphs = [p for p in llm_text.split("\n\n") if p.strip()]
-        if paragraphs:
-            sentences = [s.strip() for s in paragraphs[-1].split(".") if s.strip()]
-            if sentences:
-                return sentences[0]
+        # Try to find an action recommendation
+        for action_key, action_value in action_mapping.items():
+            if action_key in llm_text:
+                default_response["action"] = action_value
+                break
+        
+        # Try to extract allocation percentages
+        allocations = {}
+        for protocol in ["pancakeswap", "traderjoe", "quickswap", "uniswap", "curve", "aave", "compound"]:
+            # Look for allocation patterns like "PancakeSwap: 25%" or "Allocate 30% to QuickSwap"
+            protocol_lower = protocol.lower()
+            allocation_patterns = [
+                f"{protocol}[:\s]?\s*(\d+)%",
+                f"{protocol.title()}[:\s]?\s*(\d+)%",
+                f"{protocol_lower}[:\s]?\s*(\d+)%",
+                f"(\d+)%\s*(?:to|for|in)?\s*{protocol}",
+                f"(\d+)%\s*(?:to|for|in)?\s*{protocol.title()}",
+                f"(\d+)%\s*(?:to|for|in)?\s*{protocol_lower}"
+            ]
+            
+            for pattern in allocation_patterns:
+                match = re.search(pattern, llm_text, re.IGNORECASE)
+                if match:
+                    allocations[protocol_lower] = float(match.group(1)) / 100
+                    break
+        
+        # Only include allocations if we found some
+        if allocations:
+            default_response["allocations"] = allocations
+            
+        return default_response
+        
+    def _rule_based_decision(self, perception, memory, goals):
+        """Simple rule-based decision making as fallback"""
+        # Enhanced rules for investment decisions
+        
+        # Extract market data if available
+        market_data = perception.get("market_data", {})
+        protocols_data = market_data.get("protocols", {})
+        
+        # Default allocations in case we need them
+        default_allocations = {
+            "pancakeswap": 0.33,
+            "traderjoe": 0.33,
+            "quickswap": 0.34
+        }
+        
+        # Check for high volatility market conditions
+        if market_data.get("volatility", 0) > 0.6:
+            return {
+                "action": "reduce_risk",
+                "confidence": 0.8,
+                "reasoning": "High market volatility detected. Reducing risk by moving to more stable positions.",
+                "method": "rule_based"
+            }
+        
+        # Check for significant APY differential (opportunity to rebalance)
+        if protocols_data:
+            # Calculate average APY
+            apy_values = [p.get("apy", 0) for p in protocols_data.values()]
+            if apy_values:
+                avg_apy = sum(apy_values) / len(apy_values)
                 
-        return "no_clear_action"
+                # Find protocols with much higher APY than average
+                high_apy_protocols = {
+                    name: data.get("apy", 0) 
+                    for name, data in protocols_data.items() 
+                    if data.get("apy", 0) > avg_apy * 1.5
+                }
+                
+                if high_apy_protocols:
+                    # Calculate allocations based on relative APY values
+                    total_high_apy = sum(high_apy_protocols.values())
+                    allocations = {
+                        name: (apy / total_high_apy) if total_high_apy > 0 else 0.5
+                        for name, apy in high_apy_protocols.items()
+                    }
+                    
+                    return {
+                        "action": "reallocate_portfolio",
+                        "allocations": allocations,
+                        "confidence": 0.7,
+                        "reasoning": f"Identified protocols with significantly higher APY: {', '.join(high_apy_protocols.keys())}",
+                        "method": "rule_based"
+                    }
+        
+        # If we have very little data, request more data
+        if not protocols_data:
+            return {
+                "action": "gather_more_information",
+                "confidence": 0.9,
+                "reasoning": "Insufficient protocol data for making an informed investment decision",
+                "method": "rule_based"
+            }
+                
+        # Default: maintain current positions if no clear action emerges
+        return {
+            "action": "maintain_positions",
+            "allocations": default_allocations,
+            "confidence": 0.5,
+            "reasoning": "Current positions appear optimal based on available data",
+            "method": "rule_based"
+        }
 
 class AutonomousAgent:
     """Main agent class that integrates all cognitive components"""

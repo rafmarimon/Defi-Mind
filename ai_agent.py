@@ -23,21 +23,46 @@ logger = logging.getLogger("ai_trading_bot")
 # Load environment variables
 load_dotenv()
 
+# Check if we're in simulation mode
+SIMULATION_MODE = os.getenv("SIMULATION_MODE", "false").lower() == "true"
+if SIMULATION_MODE:
+    logger.info("🧪 Running in SIMULATION MODE - No blockchain interactions will occur")
+
 # Connect to Polygon Mainnet using Infura RPC from .env
 INFURA_RPC_URL = os.getenv("INFURA_RPC_URL")
-if not INFURA_RPC_URL:
+if not INFURA_RPC_URL and not SIMULATION_MODE:
     logger.error("❌ Missing INFURA_RPC_URL in environment variables!")
     exit(1)
 
 try:
-    web3 = Web3(Web3.HTTPProvider(INFURA_RPC_URL))
-    if web3.is_connected():
-        logger.info("✅ Successfully connected to Polygon Mainnet via Infura!")
+    if not SIMULATION_MODE:
+        web3 = Web3(Web3.HTTPProvider(INFURA_RPC_URL))
+        if web3.is_connected():
+            logger.info("✅ Successfully connected to Polygon Mainnet via Infura!")
+        else:
+            raise ConnectionError("Failed to connect to Polygon RPC.")
     else:
-        raise ConnectionError("Failed to connect to Polygon RPC.")
+        # Create a mock web3 instance for simulation
+        class MockWeb3:
+            def __init__(self):
+                self.eth = MockEth()
+                
+            def is_connected(self):
+                return True
+                
+        class MockEth:
+            @property
+            def gas_price(self):
+                return 50000000000  # Simulated 50 gwei
+                
+        web3 = MockWeb3()
+        logger.info("✅ Created simulated Web3 connection")
 except Exception as e:
-    logger.error(f"❌ RPC Connection Error: {e}")
-    exit(1)
+    if not SIMULATION_MODE:
+        logger.error(f"❌ RPC Connection Error: {e}")
+        exit(1)
+    else:
+        logger.warning(f"⚠️ RPC Connection would have failed in non-simulation mode: {e}")
 
 class AITradingAgent:
     def __init__(self, model_path=None):
