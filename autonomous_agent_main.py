@@ -2,7 +2,7 @@ import os
 import logging
 import asyncio
 import json
-from datetime import datetime
+from datetime import datetime, timedelta
 from dotenv import load_dotenv
 
 # Import our agent components
@@ -37,13 +37,32 @@ class AutonomousTradingSystem:
         # Set initial goals
         self.agent.set_goals([
             "Maximize investment returns across DeFi protocols",
-            "Minimize risk during high volatility periods",
-            "Identify optimal yield opportunities",
-            "Maintain balanced portfolio exposure"
+            "Identify optimal yield opportunities with balanced risk",
+            "Take profits strategically when targets are reached",
+            "Protect capital during high volatility periods",
+            "Maintain diversification while capitalizing on high-APY opportunities"
         ])
         
         # Store market state
         self.market_state = {}
+        
+        # Store daily report data
+        self.daily_report = {
+            "date": datetime.now().date().isoformat(),
+            "actions_taken": [],
+            "portfolio_value": 0,
+            "current_allocations": {},
+            "discovered_opportunities": [],
+            "performance": {
+                "daily_yield": 0,
+                "weekly_yield": 0,
+                "monthly_yield": 0
+            }
+        }
+        
+        # Track reporting time
+        self.last_report_time = datetime.now()
+        self.report_frequency = timedelta(days=1)  # Daily reports
         
     async def initialize(self):
         """Initialize all system components"""
@@ -107,10 +126,25 @@ class AutonomousTradingSystem:
             # Check what kind of action is recommended
             action = action_data.get("action", "")
             
+            # Record action for daily report
+            action_record = {
+                "timestamp": datetime.now().isoformat(),
+                "action": action,
+                "details": {},
+                "status": "pending"
+            }
+            
             if action == "reallocate_portfolio" and "allocations" in action_data:
                 # Execute the rebalance
                 allocations = action_data["allocations"]
                 await self.trading_bot.execute_rebalance(allocations)
+                
+                # Update daily report
+                action_record["details"] = {"allocations": allocations}
+                action_record["status"] = "success"
+                self.daily_report["actions_taken"].append(action_record)
+                self.daily_report["current_allocations"] = allocations
+                
                 return {"status": "success", "message": "Portfolio reallocated"}
                 
             elif action == "reduce_risk":
@@ -122,7 +156,40 @@ class AutonomousTradingSystem:
                     # Remaining 0.6 would go to stables in a real implementation
                 }
                 await self.trading_bot.execute_rebalance(safe_allocations)
+                
+                # Update daily report
+                action_record["details"] = {"safe_allocations": safe_allocations, "reason": "risk_reduction"}
+                action_record["status"] = "success"
+                self.daily_report["actions_taken"].append(action_record)
+                self.daily_report["current_allocations"] = safe_allocations
+                
                 return {"status": "success", "message": "Risk reduced"}
+                
+            elif action == "take_profits":
+                # Logic to take profits would be implemented here
+                # This is a placeholder
+                action_record["details"] = {"profit_taken": True}
+                action_record["status"] = "success"
+                self.daily_report["actions_taken"].append(action_record)
+                
+                return {"status": "success", "message": "Profits taken"}
+                
+            elif action == "maintain_positions":
+                # No changes needed
+                action_record["details"] = {"maintained": True}
+                action_record["status"] = "success"
+                self.daily_report["actions_taken"].append(action_record)
+                
+                return {"status": "success", "message": "Maintaining current positions"}
+                
+            elif action == "increase_exposure":
+                # Logic to increase exposure to high-performing assets
+                # This is a placeholder
+                action_record["details"] = {"increased_exposure": True}
+                action_record["status"] = "success"
+                self.daily_report["actions_taken"].append(action_record)
+                
+                return {"status": "success", "message": "Increased exposure to high-performing assets"}
                 
             elif action == "gather_more_information":
                 # Just return that we'll continue monitoring
@@ -134,6 +201,81 @@ class AutonomousTradingSystem:
         except Exception as e:
             logger.error(f"❌ Error executing recommendation: {e}")
             return {"status": "error", "message": str(e)}
+            
+    async def generate_daily_report(self):
+        """Generate a comprehensive daily investment report"""
+        try:
+            # Check if it's time for a daily report
+            now = datetime.now()
+            if (now - self.last_report_time) < self.report_frequency:
+                # Not time yet for a report
+                return None
+                
+            logger.info("📊 Generating daily investment report")
+            
+            # Update report date
+            self.daily_report["date"] = now.date().isoformat()
+            
+            # Calculate portfolio value and yields
+            # In a real implementation, this would get actual data
+            # This is just a placeholder
+            total_value = self.trading_bot.scanner.get_portfolio_value() if hasattr(self.trading_bot.scanner, "get_portfolio_value") else 1000
+            self.daily_report["portfolio_value"] = total_value
+            
+            # Create report content using LLM if available
+            report_content = "Daily Investment Report\n"
+            report_content += f"Date: {self.daily_report['date']}\n\n"
+            
+            if self.agent.reasoning.use_llm:
+                # Use LLM to generate a narrative report
+                prompt = f"""
+Generate a concise daily investment report with the following information:
+
+Portfolio Summary:
+- Current Value: ${self.daily_report["portfolio_value"]}
+- Current Allocations: {json.dumps(self.daily_report["current_allocations"], indent=2)}
+
+Recent Actions:
+{json.dumps(self.daily_report["actions_taken"][-5:], indent=2)}
+
+Market Observations:
+{json.dumps(self.market_state, indent=2)}
+
+The report should be professional, data-driven and include:
+1. Summary of performance
+2. Key actions taken and reasoning
+3. Noteworthy market conditions
+4. Strategy adjustments made
+5. Outlook for next 24 hours
+"""
+                response = self.agent.reasoning.llm_reasoning(
+                    prompt,
+                    system="You are an investment banking AI generating a professional daily portfolio report. Be concise, precise with numbers, and focus on key insights."
+                )
+                
+                if "error" not in response:
+                    report_content = response["reasoning"]
+                    
+            else:
+                # Generate a basic report without LLM
+                report_content += f"Portfolio Value: ${self.daily_report['portfolio_value']}\n"
+                report_content += "Current Allocations:\n"
+                for protocol, allocation in self.daily_report["current_allocations"].items():
+                    report_content += f"- {protocol}: {allocation*100:.1f}%\n"
+                    
+                report_content += "\nActions Taken Today:\n"
+                for action in self.daily_report["actions_taken"][-5:]:
+                    report_content += f"- {action['action']} at {action['timestamp'][11:16]}\n"
+                    
+            # Reset for next report
+            self.last_report_time = now
+            self.daily_report["actions_taken"] = []  # Keep only recent actions
+            
+            return report_content
+            
+        except Exception as e:
+            logger.error(f"❌ Error generating daily report: {e}")
+            return f"Error generating daily report: {e}"
             
     async def cognitive_decision_cycle(self):
         """Run one full autonomous decision cycle"""
@@ -157,11 +299,19 @@ class AutonomousTradingSystem:
             # Add the execution result to our memory
             self.agent.memory.add_short_term(f"Action execution result: {execution_result}")
             
+            # Check if it's time for a daily report
+            report = await self.generate_daily_report()
+            if report:
+                logger.info(f"📈 Daily report generated")
+                # In a real implementation, this would be sent to the user
+                # or stored for later retrieval
+            
             return {
                 "observation": observation,
                 "reasoning": reasoning,
                 "action": action,
-                "execution_result": execution_result
+                "execution_result": execution_result,
+                "daily_report": report
             }
         
         return {

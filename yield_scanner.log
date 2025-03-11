@@ -21,3 +21,29 @@
 2025-03-09 20:16:55,568 - ai_trading_bot - INFO - 🔄 Rebalancing portfolio with $1000 total investment
 2025-03-09 20:16:55,568 - ai_trading_bot - INFO - 💰 Allocating: {'pancakeswap': 325.14843344688416, 'traderjoe': 336.7708623409271, 'quickswap': 338.08067440986633}
 2025-03-09 20:16:55,568 - ai_trading_bot - INFO - ✅ Final Allocations: {'pancakeswap': 0.32514843344688416, 'traderjoe': 0.3367708623409271, 'quickswap': 0.33808067440986633}
+2025-03-10 12:01:15,467 - ai_trading_bot - INFO - Scanning all protocols for yield opportunities...
+2025-03-10 12:01:18,710 - ai_trading_bot - WARNING - No valid pools found for traderjoe
+2025-03-10 12:01:22,623 - ai_trading_bot - WARNING - No valid pools found for quickswap
+2025-03-10 12:01:22,624 - ai_trading_bot - INFO - Found 9 opportunities
+2025-03-10 12:01:22,624 - ai_trading_bot - INFO - pancakeswap: WETH-USDC - APY: 184.83% - TVL: $2,479,587.00
+2025-03-10 12:01:22,624 - ai_trading_bot - INFO - uniswap: DRB-WETH - APY: 3472.69% - TVL: $1,156,399.00
+2025-03-10 12:01:22,624 - ai_trading_bot - INFO - aave: GHO - APY: 13.82% - TVL: $139,358,582.00
+2025-03-10 12:01:22,624 - ai_trading_bot - INFO - curve: MSETH-WETH - APY: 44.77% - TVL: $3,329,671.00
+2025-03-10 12:01:22,624 - ai_trading_bot - INFO - sushi: WBTC-BADGER - APY: 28.13% - TVL: $632,509.00
+2025-03-10 12:01:22,624 - ai_trading_bot - INFO - balancer: USDC-TEL - APY: 33.36% - TVL: $1,539,928.00
+2025-03-10 12:01:22,624 - ai_trading_bot - INFO - compound: USDT - APY: 5.58% - TVL: $1,843,077.00
+2025-03-10 12:01:22,624 - ai_trading_bot - INFO - gmx: BTC-USDC - APY: 47.92% - TVL: $1,937,611.00
+2025-03-10 12:01:22,624 - ai_trading_bot - INFO - velodrome: WETH-FBOMB - APY: 41.06% - TVL: $857,457.00
+2025-03-10 12:01:22,628 - ai_trading_bot - INFO - Report saved to /Users/rafaelmarimon/defi_scanner_data/yield_opportunities_20250310_1201.csv
+2025-03-11 12:51:51,833 - ai_trading_bot - INFO - 🧪 YieldScanner initialized in SIMULATION MODE with mock data
+2025-03-11 12:51:51,834 - ai_trading_bot - INFO - ✅ YieldScanner initialized with live API connections
+2025-03-11 12:51:51,834 - ai_trading_bot - INFO - Scanning all protocols for yield opportunities...
+2025-03-11 12:51:55,277 - ai_trading_bot - WARNING - No valid pools found for traderjoe
+2025-03-11 12:51:55,986 - ai_trading_bot - WARNING - ⚠️ Protocol sushi not found in simulated data
+2025-03-11 12:51:56,640 - ai_trading_bot - WARNING - ⚠️ Protocol balancer not found in simulated data
+2025-03-11 12:51:57,280 - ai_trading_bot - WARNING - ⚠️ Protocol compound not found in simulated data
+2025-03-11 12:51:58,039 - ai_trading_bot - WARNING - ⚠️ Protocol gmx not found in simulated data
+2025-03-11 12:51:58,691 - ai_trading_bot - WARNING - ⚠️ Protocol velodrome not found in simulated data
+2025-03-11 12:51:59,266 - ai_trading_bot - WARNING - No valid pools found for quickswap
+2025-03-11 12:51:59,266 - ai_trading_bot - INFO - Found 4 opportunities
+2025-03-11 12:51:59,266 - ai_trading_bot - ERROR - Error in main: 'PoolData' object has no attribute 'symbol'
