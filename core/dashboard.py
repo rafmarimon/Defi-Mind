@@ -41,6 +41,17 @@ try:
 except ImportError:
     LANGCHAIN_AVAILABLE = False
 
+# Try to import our new components
+try:
+    from core.yield_tracker import YieldTracker
+    from core.agent_communication import AgentCommunicator
+    from core.strategies.yield_optimizer import YieldOptimizer
+    from core.autonomous_agent import AutonomousAgent
+    COMPONENTS_AVAILABLE = True
+except ImportError:
+    COMPONENTS_AVAILABLE = False
+    print("Warning: Some DEFIMIND components are not available. Running in demo mode.")
+
 # ------------- PAGE SETUP & LIGHTER THEME -------------
 st.set_page_config(
     page_title="Enhanced DEFIMIND Dashboard",
@@ -624,12 +635,422 @@ WALLET_ADDRESS = "CENSORED"
         st.markdown('</div>', unsafe_allow_html=True)
     
 
+def render_yield_section():
+    """Render the DeFi yield comparison section"""
+    st.header("📈 DeFi Yield Opportunities")
+    
+    try:
+        from core.yield_tracker import YieldTracker
+        
+        # Create yield tracker instance
+        yield_tracker = YieldTracker()
+        
+        # Create tabs for different views
+        yield_tabs = st.tabs(["Best Opportunities", "Token Comparison", "Historical Trends"])
+        
+        with yield_tabs[0]:
+            st.subheader("Best Yield Opportunities")
+            
+            # Add filters
+            col1, col2 = st.columns(2)
+            with col1:
+                min_liquidity = st.slider(
+                    "Minimum Liquidity (USD)", 
+                    min_value=10000, 
+                    max_value=10000000, 
+                    value=100000,
+                    step=10000,
+                    format="$%d"
+                )
+            
+            with col2:
+                risk_options = {
+                    "All": None,
+                    "Low Risk Only": "low",
+                    "Medium Risk or Lower": "medium",
+                    "Any Risk Level": "high"
+                }
+                risk_filter = st.selectbox("Risk Filter", options=list(risk_options.keys()))
+                
+            # Fetch best yields
+            best_yields = yield_tracker.get_best_yields_by_token(min_liquidity=min_liquidity)
+            
+            # Display as a styled table
+            if not best_yields.empty:
+                # Format APY as percentage
+                best_yields['apy_display'] = best_yields['apy'].apply(lambda x: f"{x:.2f}%")
+                
+                # Format liquidity with commas
+                best_yields['liquidity_display'] = best_yields['liquidity_usd'].apply(lambda x: f"${x:,.0f}")
+                
+                # Add risk column if available
+                if 'risk_score' in best_yields.columns:
+                    best_yields['risk_display'] = best_yields['risk_score'].apply(
+                        lambda x: "Low" if x <= 1.3 else "Medium" if x <= 1.6 else "High"
+                    )
+                    
+                    # Apply risk filter if selected
+                    selected_risk = risk_options[risk_filter]
+                    if selected_risk == "low":
+                        best_yields = best_yields[best_yields['risk_score'] <= 1.3]
+                    elif selected_risk == "medium":
+                        best_yields = best_yields[best_yields['risk_score'] <= 1.6]
+                
+                # Display table
+                if 'risk_display' in best_yields.columns:
+                    display_df = best_yields[['token', 'platform', 'apy_display', 'liquidity_display', 'risk_display']]
+                    column_config = {
+                        "token": "Token",
+                        "platform": "Platform",
+                        "apy_display": "APY",
+                        "liquidity_display": "Liquidity",
+                        "risk_display": "Risk Level"
+                    }
+                else:
+                    display_df = best_yields[['token', 'platform', 'apy_display', 'liquidity_display']]
+                    column_config = {
+                        "token": "Token",
+                        "platform": "Platform",
+                        "apy_display": "APY",
+                        "liquidity_display": "Liquidity"
+                    }
+                
+                st.dataframe(
+                    display_df,
+                    column_config=column_config,
+                    hide_index=True
+                )
+            else:
+                st.info("No yield data available matching the criteria")
+        
+        with yield_tabs[1]:
+            st.subheader("Token Yield Comparison")
+            
+            # Token selection
+            tokens = ["USDC", "ETH", "BTC", "DAI", "USDT"]
+            selected_tokens = st.multiselect("Select Tokens", tokens, default=["USDC", "ETH"])
+            
+            if selected_tokens:
+                # Get yields for selected tokens
+                all_yields = yield_tracker.fetch_current_yields()
+                
+                # Prepare data for comparison
+                comparison_data = []
+                
+                for platform, pools in all_yields.items():
+                    for pool in pools:
+                        if pool['token'] in selected_tokens:
+                            comparison_data.append({
+                                'token': pool['token'],
+                                'platform': platform,
+                                'apy': pool['apy'],
+                                'liquidity': pool['liquidity_usd']
+                            })
+                
+                if comparison_data:
+                    # Convert to DataFrame
+                    df = pd.DataFrame(comparison_data)
+                    
+                    # Create bar chart
+                    fig = px.bar(
+                        df, 
+                        x='token', 
+                        y='apy', 
+                        color='platform',
+                        barmode='group',
+                        title="Yield Comparison by Token",
+                        labels={'apy': 'APY (%)', 'token': 'Token'}
+                    )
+                    st.plotly_chart(fig, use_container_width=True)
+                    
+                    # Show data table
+                    st.subheader("Detailed Comparison")
+                    df['apy_display'] = df['apy'].apply(lambda x: f"{x:.2f}%")
+                    df['liquidity_display'] = df['liquidity'].apply(lambda x: f"${x:,.0f}")
+                    
+                    st.dataframe(
+                        df[['token', 'platform', 'apy_display', 'liquidity_display']],
+                        column_config={
+                            "token": "Token",
+                            "platform": "Platform",
+                            "apy_display": "APY",
+                            "liquidity_display": "Liquidity"
+                        },
+                        hide_index=True
+                    )
+                else:
+                    st.info("No data available for selected tokens")
+            else:
+                st.info("Please select at least one token for comparison")
+        
+        with yield_tabs[2]:
+            st.subheader("Historical Yield Trends")
+            
+            # Token selection
+            selected_token = st.selectbox("Select Token", tokens, index=0)
+            
+            # Date range
+            days = st.slider("Days of History", min_value=7, max_value=90, value=30)
+            
+            # Get historical data
+            hist_data = yield_tracker.get_historical_yield_trends(days=days, tokens=[selected_token])
+            
+            if not hist_data.empty:
+                # Plot the data
+                fig = px.line(
+                    hist_data, 
+                    x='date', 
+                    y='apy', 
+                    color='platform',
+                    title=f"{selected_token} Yield Trends ({days} Days)",
+                    labels={'apy': 'APY (%)', 'date': 'Date', 'platform': 'Platform'}
+                )
+                st.plotly_chart(fig, use_container_width=True)
+                
+                # Show highest and lowest yields
+                st.subheader("Yield Range")
+                
+                latest_data = hist_data[hist_data['date'] == hist_data['date'].max()]
+                
+                if not latest_data.empty:
+                    max_idx = latest_data['apy'].idxmax()
+                    min_idx = latest_data['apy'].idxmin()
+                    
+                    col1, col2 = st.columns(2)
+                    with col1:
+                        st.metric(
+                            "Highest Current Yield", 
+                            f"{latest_data.loc[max_idx, 'apy']:.2f}%",
+                            f"on {latest_data.loc[max_idx, 'platform'].title()}"
+                        )
+                    
+                    with col2:
+                        st.metric(
+                            "Lowest Current Yield", 
+                            f"{latest_data.loc[min_idx, 'apy']:.2f}%",
+                            f"on {latest_data.loc[min_idx, 'platform'].title()}"
+                        )
+            else:
+                st.info(f"No historical yield data for {selected_token}")
+    
+    except ImportError:
+        st.warning("Yield tracking module not available. Make sure yield_tracker.py is in your project directory.")
+    except Exception as e:
+        st.error(f"Error rendering yield section: {str(e)}")
+
+
+def render_agent_communication_section():
+    """Render the agent communication section"""
+    st.header("🤖 Agent Communication")
+    
+    try:
+        from core.agent_communication import AgentCommunicator
+        from core.autonomous_agent import AutonomousAgent
+        
+        # Create communicator
+        agent_comm = AgentCommunicator()
+        
+        # Create tabs
+        comm_tabs = st.tabs(["Market Updates", "Agent Activity", "Ask DEFIMIND"])
+        
+        with comm_tabs[0]:
+            st.subheader("Latest Market Analysis")
+            
+            # Get or generate market update
+            if 'market_update' not in st.session_state or 'market_update_time' not in st.session_state:
+                st.session_state.market_update = None
+                st.session_state.market_update_time = None
+            
+            # Button to generate new update
+            if st.button("Generate New Market Update"):
+                with st.spinner("Analyzing market conditions..."):
+                    update = agent_comm.generate_market_update()
+                    st.session_state.market_update = update
+                    st.session_state.market_update_time = datetime.now()
+            
+            # Display update if available
+            if st.session_state.market_update:
+                st.info(st.session_state.market_update)
+                st.caption(f"Generated at: {st.session_state.market_update_time.strftime('%Y-%m-%d %H:%M:%S')}")
+            else:
+                # Initial placeholder
+                st.info("Click 'Generate New Market Update' to get the latest DeFi market analysis.")
+        
+        with comm_tabs[1]:
+            st.subheader("Recent Agent Activity")
+            
+            # Try to get the autonomous agent for real activity
+            try:
+                agent = AutonomousAgent()
+                status = agent.get_status()
+                
+                # Show agent status
+                st.write("**Agent Status:**")
+                
+                status_cols = st.columns(3)
+                with status_cols[0]:
+                    st.metric("Mode", "Simulation" if status.get('simulation_mode', True) else "Live")
+                
+                with status_cols[1]:
+                    st.metric("Risk Tolerance", status.get('risk_tolerance', 'medium').title())
+                
+                with status_cols[2]:
+                    actions_count = status.get('actions_taken_count', 0)
+                    st.metric("Actions Taken", f"{actions_count}")
+                
+                # Show last action time if available
+                if status.get('last_action_time'):
+                    st.caption(f"Last action taken at: {status['last_action_time']}")
+                
+                # Generate activity report if agent has actions
+                if actions_count > 0:
+                    with st.spinner("Generating activity report..."):
+                        activity_report = agent_comm.generate_activity_report()
+                        st.write(activity_report)
+                else:
+                    # Display demo activity
+                    st.info("The agent has not taken any actions yet. Here's a sample of what activity reports look like:")
+                    
+                    sample_actions = [
+                        {
+                            "type": "allocation",
+                            "platform": "aave",
+                            "token": "ETH",
+                            "amount": 0.5,
+                            "expected_apy": 1.8,
+                            "timestamp": datetime.now().isoformat(),
+                            "status": "simulated"
+                        },
+                        {
+                            "type": "rebalance",
+                            "from_platform": "compound",
+                            "to_platform": "aave",
+                            "token": "USDC",
+                            "amount": 500,
+                            "value_usd": 500,
+                            "current_apy": 2.9,
+                            "new_apy": 3.2,
+                            "timestamp": datetime.now().isoformat(),
+                            "status": "simulated",
+                            "reason": "better yield (3.2% vs 2.9%)"
+                        }
+                    ]
+                    
+                    report = agent_comm.generate_activity_report(sample_actions)
+                    st.write(report)
+                    st.caption("This is a sample report. The agent will generate real reports as it takes actions.")
+            
+            except ImportError:
+                st.warning("Autonomous agent module not available.")
+                
+                # Fallback to sample activity
+                st.info("Sample Agent Activity Report:")
+                sample_report = """
+                ## DEFIMIND Activity Report
+
+                In the past 24 hours, I've made the following portfolio adjustments:
+
+                ### Actions Taken:
+                1. Allocated 0.5 ETH to Aave (~$1,640) at 1.8% APY
+                2. Rebalanced 500 USDC from Compound to Aave to take advantage of higher yield (3.2% vs 2.9%)
+
+                ### Current Portfolio:
+                - 2.5 ETH on Aave ($8,201.13) earning 1.8% APY
+                - 2,249.1 USDC on Compound ($2,249.10) earning 3.0% APY
+                - Total portfolio value: $10,450.23
+                - Current weighted average yield: 2.8%
+
+                ### Reasoning:
+                The rebalancing of USDC was performed because Aave is currently offering a 0.3% higher yield than Compound. This difference exceeds our rebalance threshold of 0.2% and justifies the transaction costs.
+                """
+                st.write(sample_report)
+                st.caption("This is a sample report for demonstration purposes.")
+        
+        with comm_tabs[2]:
+            st.subheader("Ask DEFIMIND")
+            
+            # Initialize chat history
+            if 'chat_history' not in st.session_state:
+                st.session_state.chat_history = []
+            
+            # Display chat history
+            for message in st.session_state.chat_history:
+                if message['role'] == 'user':
+                    st.write(f"**You:** {message['content']}")
+                else:
+                    st.write(f"**DEFIMIND:** {message['content']}")
+            
+            # Input for new question
+            user_question = st.text_input("Your question:", key="agent_question")
+            
+            if user_question and st.button("Ask"):
+                # Add user question to history
+                st.session_state.chat_history.append({"role": "user", "content": user_question})
+                
+                # Get response
+                with st.spinner("Thinking..."):
+                    response = agent_comm.answer_user_question(user_question)
+                    
+                    # Add response to history
+                    st.session_state.chat_history.append({"role": "agent", "content": response})
+                
+                # Force a rerun to show the updated chat
+                st.rerun()
+    
+    except ImportError:
+        st.warning("Agent communication module not available. Make sure agent_communication.py is in your project directory.")
+    except Exception as e:
+        st.error(f"Error rendering agent communication section: {str(e)}")
+
+
+# Initialize session state for components
+def init_defimind_components():
+    if 'yield_tracker' not in st.session_state:
+        if COMPONENTS_AVAILABLE:
+            try:
+                st.session_state.yield_tracker = YieldTracker()
+            except:
+                st.session_state.yield_tracker = None
+        else:
+            st.session_state.yield_tracker = None
+            
+    if 'agent_communicator' not in st.session_state:
+        if COMPONENTS_AVAILABLE:
+            try:
+                st.session_state.agent_communicator = AgentCommunicator()
+            except:
+                st.session_state.agent_communicator = None
+        else:
+            st.session_state.agent_communicator = None
+            
+    if 'yield_optimizer' not in st.session_state:
+        if COMPONENTS_AVAILABLE:
+            try:
+                st.session_state.yield_optimizer = YieldOptimizer()
+            except:
+                st.session_state.yield_optimizer = None
+        else:
+            st.session_state.yield_optimizer = None
+            
+    if 'autonomous_agent' not in st.session_state:
+        if COMPONENTS_AVAILABLE:
+            try:
+                st.session_state.autonomous_agent = AutonomousAgent()
+            except:
+                st.session_state.autonomous_agent = None
+        else:
+            st.session_state.autonomous_agent = None
+
+
 # -------------------------
 # MAIN (SIDEBAR & ROUTING)
 # -------------------------
 def main():
     # (Optional) Could run concurrency or background tasks here
     # e.g. data = asyncio.run(async_fetch_example())
+    
+    # Initialize DEFIMIND components
+    init_defimind_components()
 
     st.sidebar.title("Navigation")
     
@@ -650,6 +1071,11 @@ def main():
             "title": "Trading Strategy",
             "desc": "Current allocations and performance"
         },
+        "yield_comparison": {
+            "emoji": "💰",
+            "title": "Yield Comparison",
+            "desc": "Compare yields across DeFi platforms"
+        },
         "blockchain_insights": {
             "emoji": "📦",
             "title": "Blockchain Insights",
@@ -665,10 +1091,10 @@ def main():
             "title": "Pyth Searcher",
             "desc": "SVM limit order opportunities"
         },
-        "agent_chat": {
+        "agent_communication": {
             "emoji": "🤖",
-            "title": "Agent Chat",
-            "desc": "Chat with the trading agent"
+            "title": "Agent Communication",
+            "desc": "Get updates and chat with the agent"
         },
     }
 
@@ -691,14 +1117,16 @@ def main():
         page_protocol_analytics()
     elif choice == 'trading_strategy':
         page_trading_strategy()
+    elif choice == 'yield_comparison':
+        render_yield_section()
     elif choice == 'blockchain_insights':
         page_blockchain_insights()
     elif choice == 'market_history':
         page_market_history()
     elif choice == 'pyth_searcher':
         render_pyth_searcher_section()
-    elif choice == 'agent_chat':
-        page_agent_chat()
+    elif choice == 'agent_communication':
+        render_agent_communication_section()
 
     st.write("---")
     st.markdown(f"""

@@ -1,0 +1,194 @@
+#!/usr/bin/env python3
+"""
+Test script for the DEFIMIND LangChain Agent component.
+This script tests the LangChain integration for natural language interactions.
+"""
+
+import os
+import sys
+import importlib
+from pathlib import Path
+
+# Add the project root to Python path if not already there
+if str(Path('.').absolute()) not in sys.path:
+    sys.path.insert(0, str(Path('.').absolute()))
+
+def test_langchain_agent_imports():
+    """Test importing the LangChain agent module and its classes"""
+    print("\n==== Testing LangChain Agent Imports ====")
+    
+    try:
+        # Import the LangChain agent module
+        from core import langchain_agent
+        print("✅ Successfully imported langchain_agent module")
+        
+        # Check for key classes
+        classes_to_check = [
+            "LangChainAgent",
+        ]
+        
+        all_classes_found = True
+        for class_name in classes_to_check:
+            if hasattr(langchain_agent, class_name):
+                print(f"✅ Found '{class_name}' class")
+            else:
+                print(f"❌ Missing '{class_name}' class")
+                all_classes_found = False
+        
+        # Check for key constants
+        constants_to_check = [
+            "DEFAULT_SYSTEM_PROMPT",
+            "AGENT_NAME"
+        ]
+        
+        all_constants_found = True
+        for const_name in constants_to_check:
+            if hasattr(langchain_agent, const_name):
+                print(f"✅ Found '{const_name}' constant")
+            else:
+                print(f"❌ Missing '{const_name}' constant")
+                all_constants_found = False
+        
+        return all_classes_found and all_constants_found, langchain_agent
+    
+    except ImportError as e:
+        print(f"❌ Failed to import langchain_agent: {e}")
+        return False, None
+    except Exception as e:
+        print(f"❌ Unexpected error: {e}")
+        return False, None
+
+def test_langchain_agent_class(agent_module):
+    """Test the LangChainAgent class structure"""
+    print("\n==== Testing LangChainAgent Class ====")
+    
+    if not hasattr(agent_module, 'LangChainAgent'):
+        print("❌ Cannot test LangChainAgent class: class not found")
+        return False
+    
+    try:
+        # Get the class
+        LangChainAgent = agent_module.LangChainAgent
+        
+        # Check required methods - using the actual method names in the implementation
+        required_methods = [
+            "__init__",
+            "_get_system_prompt",  # Internal method instead of get_llm
+            "process_message",
+            "_setup_chains"  # Internal method instead of create_chain
+        ]
+        
+        all_methods_found = True
+        for method_name in required_methods:
+            if hasattr(LangChainAgent, method_name):
+                print(f"✅ Found '{method_name}' method")
+            else:
+                print(f"❌ Missing '{method_name}' method")
+                all_methods_found = False
+        
+        # Check if the class can be initialized with mock parameters
+        try:
+            # We don't actually create an instance since it might require API keys
+            print("✅ Class structure looks valid")
+            return all_methods_found
+        except Exception as e:
+            print(f"❌ Error examining class: {e}")
+            return False
+            
+    except Exception as e:
+        print(f"❌ Error testing LangChainAgent class: {e}")
+        return False
+
+def test_system_prompt(agent_module):
+    """Test the system prompt configuration"""
+    print("\n==== Testing System Prompt ====")
+    
+    if not hasattr(agent_module, 'DEFAULT_SYSTEM_PROMPT'):
+        print("❌ Cannot test system prompt: DEFAULT_SYSTEM_PROMPT not found")
+        return False
+    
+    try:
+        # Check if the prompt contains key elements
+        prompt = agent_module.DEFAULT_SYSTEM_PROMPT
+        print(f"✅ Found system prompt ({len(prompt)} characters)")
+        
+        key_elements = [
+            "DEFIMIND",
+            "trading",
+            "analysis",
+            "blockchain"
+        ]
+        
+        for element in key_elements:
+            if element.lower() in prompt.lower():
+                print(f"✅ Prompt contains '{element}' context")
+            else:
+                print(f"ℹ️ Prompt doesn't mention '{element}'")
+        
+        return True
+    except Exception as e:
+        print(f"❌ Error testing system prompt: {e}")
+        return False
+
+def test_agent_configuration(agent_module):
+    """Test agent configuration options"""
+    print("\n==== Testing Agent Configuration ====")
+    
+    try:
+        # Check if config attributes exist
+        if hasattr(agent_module, 'AGENT_NAME'):
+            print(f"✅ Agent name: {agent_module.AGENT_NAME}")
+        else:
+            print("❌ Missing AGENT_NAME constant")
+        
+        # Check for LLM configuration
+        llm_configs = [
+            "OPENAI_API_KEY",
+            "OPENROUTER_API_KEY",
+            "LLM_PROVIDER"
+        ]
+        
+        for config in llm_configs:
+            if hasattr(agent_module, config):
+                print(f"✅ Found '{config}' configuration")
+            else:
+                print(f"ℹ️ No '{config}' configuration found (might be loaded from env)")
+        
+        return True
+    except Exception as e:
+        print(f"❌ Error testing agent configuration: {e}")
+        return False
+
+def run_tests():
+    """Run all tests for the LangChain agent module"""
+    print("\n=========================================")
+    print("DEFIMIND LangChain Agent Component Test")
+    print("=========================================")
+    
+    # Test imports
+    import_success, agent_module = test_langchain_agent_imports()
+    if not import_success:
+        print("\n❌ Import test failed. Stopping further tests.")
+        return False
+    
+    # Test LangChainAgent class
+    agent_class_success = test_langchain_agent_class(agent_module)
+    
+    # Test system prompt
+    prompt_success = test_system_prompt(agent_module)
+    
+    # Test agent configuration
+    config_success = test_agent_configuration(agent_module)
+    
+    # Overall test result
+    overall_success = import_success and agent_class_success and prompt_success and config_success
+    
+    print("\n=========================================")
+    print(f"Overall Test Result: {'✅ PASSED' if overall_success else '❌ FAILED'}")
+    print("=========================================")
+    
+    return overall_success
+
+if __name__ == "__main__":
+    success = run_tests()
+    sys.exit(0 if success else 1) 

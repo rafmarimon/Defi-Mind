@@ -1,0 +1,154 @@
+{
+  "timestamp": "2025-03-11 20:07:20",
+  "duration": "3.84 seconds",
+  "total_components": 8,
+  "successful_components": 2,
+  "failed_components": 6,
+  "results": {
+    "defimind_runner": {
+      "success": false,
+      "messages": [
+        {
+          "time": "20:07:19",
+          "message": "Successfully imported module",
+          "success": true
+        },
+        {
+          "time": "20:07:19",
+          "message": "Found main function",
+          "success": true
+        },
+        {
+          "time": "20:07:19",
+          "message": "Missing parse_args function",
+          "success": false
+        }
+      ]
+    },
+    "live_data_fetcher": {
+      "success": false,
+      "messages": [
+        {
+          "time": "20:07:19",
+          "message": "Successfully imported module",
+          "success": true
+        },
+        {
+          "time": "20:07:19",
+          "message": "Missing fetch_price function",
+          "success": false
+        },
+        {
+          "time": "20:07:19",
+          "message": "Missing fetch_protocol_data function",
+          "success": false
+        }
+      ]
+    },
+    "defimind_persistence": {
+      "success": false,
+      "messages": [
+        {
+          "time": "20:07:19",
+          "message": "Successfully imported module",
+          "success": true
+        },
+        {
+          "time": "20:07:19",
+          "message": "Missing DefimindPersistence class",
+          "success": false
+        }
+      ]
+    },
+    "machine_learning": {
+      "success": false,
+      "messages": [
+        {
+          "time": "20:07:19",
+          "message": "Successfully imported module",
+          "success": true
+        },
+        {
+          "time": "20:07:19",
+          "message": "Missing train_model function",
+          "success": false
+        }
+      ]
+    },
+    "trading_strategy": {
+      "success": false,
+      "messages": [
+        {
+          "time": "20:07:19",
+          "message": "Successfully imported module",
+          "success": true
+        },
+        {
+          "time": "20:07:19",
+          "message": "Missing Strategy class",
+          "success": false
+        },
+        {
+          "time": "20:07:19",
+          "message": "Found TradingStrategy class",
+          "success": true
+        }
+      ]
+    },
+    "protocol_analytics": {
+      "success": false,
+      "messages": [
+        {
+          "time": "20:07:19",
+          "message": "Successfully imported module",
+          "success": true
+        },
+        {
+          "time": "20:07:19",
+          "message": "Missing analyze_protocol function",
+          "success": false
+        },
+        {
+          "time": "20:07:19",
+          "message": "Missing get_protocol_data function",
+          "success": false
+        }
+      ]
+    },
+    "pyth_searcher": {
+      "success": true,
+      "messages": [
+        {
+          "time": "20:07:19",
+          "message": "Successfully imported module",
+          "success": true
+        },
+        {
+          "time": "20:07:19",
+          "message": "Found PythSearcher class",
+          "success": true
+        },
+        {
+          "time": "20:07:19",
+          "message": "Found Opportunity class",
+          "success": true
+        }
+      ]
+    },
+    "langchain_agent": {
+      "success": true,
+      "messages": [
+        {
+          "time": "20:07:20",
+          "message": "Successfully imported module",
+          "success": true
+        },
+        {
+          "time": "20:07:20",
+          "message": "Found LangChainAgent class",
+          "success": true
+        }
+      ]
+    }
+  }
+}

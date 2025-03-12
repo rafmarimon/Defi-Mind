@@ -1,0 +1,43 @@
+{
+  "timestamp": "2025-03-11 19:53:51",
+  "duration": "4.33 seconds",
+  "total_tests": 4,
+  "successful_tests": 0,
+  "failed_tests": 4,
+  "test_summary": {
+    "components": "\u274c FAILED",
+    "runner": "\u274c FAILED",
+    "pyth_searcher": "\u274c FAILED",
+    "langchain_agent": "\u274c FAILED"
+  },
+  "detailed_results": {
+    "components": {
+      "success": false,
+      "duration": 1.7118573188781738,
+      "return_code": 1,
+      "output": "\n==================================================\nDEFIMIND Component Test Suite - 2025-03-11 19:53:46\n==================================================\n\n",
+      "error": "Traceback (most recent call last):\n  File \"/Users/rafaelmarimon/Agent/test_components.py\", line 249, in <module>\n    tester.run_all_tests() \n    ^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/rafaelmarimon/Agent/test_components.py\", line 207, in run_all_tests\n    test()\n  File \"/Users/rafaelmarimon/Agent/test_components.py\", line 64, in test_runner\n    runner = self.import_component(\"core.defimind_runner\")\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/rafaelmarimon/Agent/test_components.py\", line 54, in import_component\n    component = importlib.import_module(component_path)\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/homebrew/Cellar/python@3.11/3.11.11/Frameworks/Python.framework/Versions/3.11/lib/python3.11/importlib/__init__.py\", line 126, in import_module\n    return _bootstrap._gcd_import(name[level:], package, level)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<frozen importlib._bootstrap>\", line 1204, in _gcd_import\n  File \"<frozen importlib._bootstrap>\", line 1176, in _find_and_load\n  File \"<frozen importlib._bootstrap>\", line 1147, in _find_and_load_unlocked\n  File \"<frozen importlib._bootstrap>\", line 690, in _load_unlocked\n  File \"<frozen importlib._bootstrap_external>\", line 940, in exec_module\n  File \"<frozen importlib._bootstrap>\", line 241, in _call_with_frames_removed\n  File \"/Users/rafaelmarimon/Agent/core/defimind_runner.py\", line 23, in <module>\n    from core.protocol_analytics import ProtocolAnalyzer, run_protocol_analysis\n  File \"/Users/rafaelmarimon/Agent/core/protocol_analytics.py\", line 33, in <module>\n    with open(PROTOCOL_CONFIG_PATH, \"r\") as f:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nFileNotFoundError: [Errno 2] No such file or directory: 'protocol_configs.json'\n"
+    },
+    "runner": {
+      "success": false,
+      "duration": 1.2037250995635986,
+      "return_code": 1,
+      "output": "\n=========================================\nDEFIMIND Runner Component Test\n=========================================\n\n==== Testing Runner Imports ====\n\u274c Unexpected error: [Errno 2] No such file or directory: 'protocol_configs.json'\n\n\u274c Import test failed. Stopping further tests.\n",
+      "error": null
+    },
+    "pyth_searcher": {
+      "success": false,
+      "duration": 0.551077127456665,
+      "return_code": 1,
+      "output": "\n=========================================\nDEFIMIND Pyth Searcher Component Test\n=========================================\n\n==== Testing Pyth Searcher Imports ====\n\u2705 Successfully imported pyth_searcher module\n\u2705 Found 'PythSearcher' class\n\u2705 Found 'Opportunity' class\n\u2705 Found 'run_pyth_searcher_demo' function\n\n==== Testing Opportunity Class ====\n\u274c Error testing Opportunity class: Opportunity.__init__() got an unexpected keyword argument 'address'\n\n==== Testing PythSearcher Class ====\n\u274c Error testing PythSearcher class: PythSearcher.__init__() got an unexpected keyword argument 'rpc_url'\n\n==== Testing run_pyth_searcher_demo Function ====\n\u2705 Found run_pyth_searcher_demo function\n\u2705 Function signature: ()\n\n=========================================\nOverall Test Result: \u274c FAILED\n=========================================\n",
+      "error": null
+    },
+    "langchain_agent": {
+      "success": false,
+      "duration": 0.8664460182189941,
+      "return_code": 1,
+      "output": "\n=========================================\nDEFIMIND LangChain Agent Component Test\n=========================================\n\n==== Testing LangChain Agent Imports ====\n\u2705 Successfully imported langchain_agent module\n\u2705 Found 'LangChainAgent' class\n\u274c Missing 'DEFAULT_SYSTEM_PROMPT' constant\n\u274c Missing 'AGENT_NAME' constant\n\n\u274c Import test failed. Stopping further tests.\n",
+      "error": null
+    }
+  }
+}
