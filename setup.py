@@ -1,0 +1,30 @@
+from setuptools import setup, find_packages
+
+setup(
+    name="defimind",
+    version="0.1.0",
+    packages=find_packages(),
+    include_package_data=True,
+    install_requires=[
+        "pandas>=1.5.3",
+        "numpy>=1.24.3",
+        "python-dotenv>=1.0.0",
+        "requests>=2.30.0",
+        "aiohttp>=3.8.5",
+        "pydantic>=2.0.0",
+        "langchain>=0.0.267",
+        "langchain-openai>=0.0.2",
+        "openai>=1.3.0",
+        "streamlit>=1.27.0",
+        "plotly>=5.15.0",
+        "psutil>=5.9.5",
+        "web3>=6.0.0",
+        "eth-account>=0.8.0",
+        "etherscan-python>=2.1.0",
+        "browser-use>=0.1.40",
+        "playwright>=1.38.0",
+        "urllib3>=2.0.0",
+        "beautifulsoup4>=4.12.0",
+    ],
+    python_requires=">=3.9",
+) 
