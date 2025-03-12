@@ -1,0 +1,62 @@
+{
+  "tokens": {
+    "ETH": {
+      "price_usd": 3200.0,
+      "24h_change": 2.5
+    },
+    "BTC": {
+      "price_usd": 65000.0,
+      "24h_change": 1.8
+    },
+    "USDC": {
+      "price_usd": 1.0,
+      "24h_change": 0.0
+    },
+    "USDT": {
+      "price_usd": 1.0,
+      "24h_change": 0.01
+    },
+    "DAI": {
+      "price_usd": 1.0,
+      "24h_change": -0.02
+    }
+  },
+  "yields": [
+    {
+      "platform": "aave",
+      "token": "ETH",
+      "apy": 1.8,
+      "tvl": 2500000000
+    },
+    {
+      "platform": "aave",
+      "token": "USDC",
+      "apy": 3.2,
+      "tvl": 5000000000
+    },
+    {
+      "platform": "compound",
+      "token": "ETH",
+      "apy": 1.5,
+      "tvl": 1800000000
+    },
+    {
+      "platform": "compound",
+      "token": "USDC",
+      "apy": 3.0,
+      "tvl": 4500000000
+    },
+    {
+      "platform": "curve",
+      "token": "USDC/USDT/DAI",
+      "apy": 3.5,
+      "tvl": 3200000000
+    }
+  ],
+  "gas": {
+    "slow": 25,
+    "average": 35,
+    "fast": 50
+  },
+  "timestamp": "2025-03-11T21:00:21.848362"
+}

@@ -1,0 +1,43 @@
+{
+  "timestamp": "2025-03-11 20:06:28",
+  "duration": "5.18 seconds",
+  "total_tests": 4,
+  "successful_tests": 4,
+  "failed_tests": 0,
+  "test_summary": {
+    "components": "\u2705 PASSED",
+    "runner": "\u2705 PASSED",
+    "pyth_searcher": "\u2705 PASSED",
+    "langchain_agent": "\u2705 PASSED"
+  },
+  "detailed_results": {
+    "components": {
+      "success": true,
+      "duration": 2.669214963912964,
+      "return_code": 0,
+      "output": "\n==================================================\nDEFIMIND Component Test Suite - 2025-03-11 20:06:23\n==================================================\n\n[20:06:25] \u2705 defimind_runner: Successfully imported module\n[20:06:25] \u2705 defimind_runner: Found main function\n[20:06:25] \u274c defimind_runner: Missing parse_args function\n\n[20:06:25] \u2705 live_data_fetcher: Successfully imported module\n[20:06:25] \u274c live_data_fetcher: Missing fetch_price function\n[20:06:25] \u274c live_data_fetcher: Missing fetch_protocol_data function\n\n[20:06:25] \u2705 defimind_persistence: Successfully imported module\n[20:06:25] \u274c defimind_persistence: Missing DefimindPersistence class\n\n[20:06:25] \u2705 machine_learning: Successfully imported module\n[20:06:25] \u274c machine_learning: Missing train_model function\n\n[20:06:25] \u2705 trading_strategy: Successfully imported module\n[20:06:25] \u274c trading_strategy: Missing Strategy class\n[20:06:25] \u2705 trading_strategy: Found TradingStrategy class\n\n[20:06:25] \u2705 protocol_analytics: Successfully imported module\n[20:06:25] \u274c protocol_analytics: Missing analyze_protocol function\n[20:06:25] \u274c protocol_analytics: Missing get_protocol_data function\n\n[20:06:25] \u2705 pyth_searcher: Successfully imported module\n[20:06:25] \u2705 pyth_searcher: Found PythSearcher class\n[20:06:25] \u2705 pyth_searcher: Found Opportunity class\n\n[20:06:26] \u2705 langchain_agent: Successfully imported module\n[20:06:26] \u2705 langchain_agent: Found LangChainAgent class\n\n\n==================================================\nTest Summary\n==================================================\nTotal components tested: 8\nSuccessful components: 2\nFailed components: 6\nTotal duration: 2.32 seconds\n==================================================\n\nDetailed results saved to: test_outputs/component_test_20250311_200626.json\n",
+      "error": null
+    },
+    "runner": {
+      "success": true,
+      "duration": 1.4898149967193604,
+      "return_code": 0,
+      "output": "\n=========================================\nDEFIMIND Runner Component Test\n=========================================\n\n==== Testing Runner Imports ====\n\u2705 Successfully imported defimind_runner\n\u2705 Found 'main' function\n\u2705 Found 'parse_arguments' function\n\u2139\ufe0f No version information available\n\n==== Testing Argument Parser ====\n\u2705 Found parse_arguments function\n\n==== Testing Component Loading ====\n\u2705 Found DefiMindRunner class\n\u2705 Found method for Initialization\n\u2705 Found method for Live Data Fetcher\n\u2705 Found method for Protocol Analytics\n\u2705 Found method for Trading Strategy\n\u2705 Found method for Machine Learning\n\n=========================================\nOverall Test Result: \u2705 PASSED\n=========================================\n",
+      "error": null
+    },
+    "pyth_searcher": {
+      "success": true,
+      "duration": 0.395841121673584,
+      "return_code": 0,
+      "output": "\n=========================================\nDEFIMIND Pyth Searcher Component Test\n=========================================\n\n==== Testing Pyth Searcher Imports ====\n\u2705 Successfully imported pyth_searcher module\n\u2705 Found 'PythSearcher' class\n\u2705 Found 'Opportunity' class\n\u2705 Found 'run_pyth_searcher_demo' function\n\n==== Testing Opportunity Class ====\n\u2705 Successfully created Opportunity instance\n\u2705 Opportunity.order_address = SampleAddress123\n\u2705 Opportunity.program = limo\n\n==== Testing PythSearcher Class ====\n\u2705 Successfully created PythSearcher instance\n\u2705 PythSearcher.simulation_mode = True\n\u2705 Found 'initialize' method\n\u2705 Found 'close' method\n\u2705 Found 'subscribe_to_opportunities' method\n\u2705 Found 'get_statistics' method\n\n==== Testing run_pyth_searcher_demo Function ====\n\u2705 Found run_pyth_searcher_demo function\n\u2705 Function signature: ()\n\n=========================================\nOverall Test Result: \u2705 PASSED\n=========================================\n",
+      "error": "2025-03-11 20:06:28,224 - defimind.pyth_searcher - INFO - Initialized Pyth Searcher for chains: solana\n2025-03-11 20:06:28,225 - defimind.pyth_searcher - INFO - Running in SIMULATION MODE - no real transactions will be submitted\n"
+    },
+    "langchain_agent": {
+      "success": true,
+      "duration": 0.6265690326690674,
+      "return_code": 0,
+      "output": "\n=========================================\nDEFIMIND LangChain Agent Component Test\n=========================================\n\n==== Testing LangChain Agent Imports ====\n\u2705 Successfully imported langchain_agent module\n\u2705 Found 'LangChainAgent' class\n\u2705 Found 'DEFAULT_SYSTEM_PROMPT' constant\n\u2705 Found 'AGENT_NAME' constant\n\n==== Testing LangChainAgent Class ====\n\u2705 Found '__init__' method\n\u2705 Found '_get_system_prompt' method\n\u2705 Found 'process_message' method\n\u2705 Found '_setup_chains' method\n\u2705 Class structure looks valid\n\n==== Testing System Prompt ====\n\u2705 Found system prompt (731 characters)\n\u2705 Prompt contains 'DEFIMIND' context\n\u2705 Prompt contains 'trading' context\n\u2705 Prompt contains 'analysis' context\n\u2705 Prompt contains 'blockchain' context\n\n==== Testing Agent Configuration ====\n\u2705 Agent name: DEFIMIND\n\u2705 Found 'OPENAI_API_KEY' configuration\n\u2705 Found 'OPENROUTER_API_KEY' configuration\n\u2705 Found 'LLM_PROVIDER' configuration\n\n=========================================\nOverall Test Result: \u2705 PASSED\n=========================================\n",
+      "error": null
+    }
+  }
+}

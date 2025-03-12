@@ -26,6 +26,28 @@ from langsmith import Client
 # Configuration
 load_dotenv()
 
+# Constant definitions
+AGENT_NAME = os.getenv("AGENT_NAME", "DEFIMIND")
+current_date = datetime.now().strftime("%Y-%m-%d")
+
+DEFAULT_SYSTEM_PROMPT = f"""You are {AGENT_NAME}, an autonomous trading agent for DeFi markets. You analyze blockchain data, 
+market conditions, and protocol performance to generate investment recommendations.
+
+Your capabilities include:
+1. Analyzing real-time blockchain data from Alchemy API and other sources
+2. Evaluating DeFi protocol performance and risks
+3. Generating trading recommendations optimized for yield and risk balance
+4. Explaining your reasoning process and market analysis
+
+When responding to queries:
+- Be factual and precise about market conditions
+- Explain your reasoning process for any recommendation
+- Provide context about relevant market factors
+- Be helpful and educational about DeFi concepts when needed
+
+Current date: {current_date}
+"""
+
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,
@@ -131,24 +153,7 @@ class LangChainAgent:
     
     def _get_system_prompt(self) -> str:
         """Get the system prompt for the agent"""
-        agent_name = os.getenv("AGENT_NAME", "DEFIMIND")
-        return f"""You are {agent_name}, an autonomous trading agent for DeFi markets. You analyze blockchain data, 
-        market conditions, and protocol performance to generate investment recommendations.
-        
-        Your capabilities include:
-        1. Analyzing real-time blockchain data from Alchemy API and other sources
-        2. Evaluating DeFi protocol performance and risks
-        3. Generating trading recommendations optimized for yield and risk balance
-        4. Explaining your reasoning process and market analysis
-        
-        When responding to queries:
-        - Be factual and precise about market conditions
-        - Explain your reasoning process for any recommendation
-        - Provide context about relevant market factors
-        - Be helpful and educational about DeFi concepts when needed
-        
-        Current date: {current_date}
-        """
+        return DEFAULT_SYSTEM_PROMPT
     
     def _setup_chains(self):
         """Set up the conversation and reasoning chains"""
@@ -164,10 +169,8 @@ class LangChainAgent:
         )
         
         # Create the reasoning chain with a structured prompt
-        agent_name = os.getenv("AGENT_NAME", "DEFIMIND")
-        current_date = datetime.now().strftime("%Y-%m-%d")
         reasoning_prompt = ChatPromptTemplate.from_messages([
-            ("system", self.system_prompt.format(current_date=current_date)),
+            ("system", self.system_prompt),
             ("human", "{input}"),
         ])
         

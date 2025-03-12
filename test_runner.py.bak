@@ -1,0 +1,137 @@
+#!/usr/bin/env python3
+"""
+Test script for the DEFIMIND Runner component.
+This script tests various functionalities of the defimind_runner.py module.
+"""
+
+import os
+import sys
+import importlib
+from pathlib import Path
+
+# Add the project root to Python path if not already there
+if str(Path('.').absolute()) not in sys.path:
+    sys.path.insert(0, str(Path('.').absolute()))
+
+def test_runner_imports():
+    """Test importing the runner module and its dependencies"""
+    print("\n==== Testing Runner Imports ====")
+    
+    try:
+        # Import the runner module
+        from core import defimind_runner
+        print("✅ Successfully imported defimind_runner")
+        
+        # Check for critical attributes
+        if hasattr(defimind_runner, 'main'):
+            print("✅ Found 'main' function")
+        else:
+            print("❌ Missing 'main' function")
+        
+        if hasattr(defimind_runner, 'parse_args'):
+            print("✅ Found 'parse_args' function")
+        else:
+            print("❌ Missing 'parse_args' function")
+        
+        # Check version if available
+        if hasattr(defimind_runner, '__version__'):
+            print(f"✅ Runner version: {defimind_runner.__version__}")
+        else:
+            print("ℹ️ No version information available")
+        
+        return True, defimind_runner
+    
+    except ImportError as e:
+        print(f"❌ Failed to import defimind_runner: {e}")
+        return False, None
+    except Exception as e:
+        print(f"❌ Unexpected error: {e}")
+        return False, None
+
+def test_argument_parser(runner_module):
+    """Test the argument parser functionality"""
+    print("\n==== Testing Argument Parser ====")
+    
+    if not hasattr(runner_module, 'parse_args'):
+        print("❌ Cannot test argument parser: function not found")
+        return False
+    
+    try:
+        # Test with different command line arguments
+        test_cases = [
+            (["run"], "Testing 'run' command"),
+            (["data"], "Testing 'data' command"),
+            (["dashboard"], "Testing 'dashboard' command"),
+            (["run_once"], "Testing 'run_once' command"),
+            (["analytics"], "Testing 'analytics' command"),
+            (["strategy"], "Testing 'strategy' command"),
+            (["models"], "Testing 'models' command"),
+        ]
+        
+        for args, description in test_cases:
+            print(f"\n{description}:")
+            try:
+                parsed_args = runner_module.parse_args(args)
+                print(f"✅ Successfully parsed args: {parsed_args}")
+                print(f"✅ Command: {parsed_args.command}")
+            except Exception as e:
+                print(f"❌ Failed to parse args: {e}")
+        
+        return True
+    except Exception as e:
+        print(f"❌ Unexpected error in argument parser: {e}")
+        return False
+
+def test_component_loading(runner_module):
+    """Test the component loading functionality"""
+    print("\n==== Testing Component Loading ====")
+    
+    # Check for component loading functions
+    component_loaders = [
+        ("load_live_data_fetcher", "Live Data Fetcher"),
+        ("load_persistence", "Persistence Layer"),
+        ("load_protocol_analytics", "Protocol Analytics"),
+        ("load_machine_learning", "Machine Learning"),
+        ("load_trading_strategy", "Trading Strategy"),
+    ]
+    
+    success = True
+    for loader_func, component_name in component_loaders:
+        if hasattr(runner_module, loader_func):
+            print(f"✅ Found loader for {component_name}")
+        else:
+            print(f"❌ Missing loader for {component_name}")
+            success = False
+    
+    return success
+
+def run_tests():
+    """Run all tests for the runner module"""
+    print("\n=========================================")
+    print("DEFIMIND Runner Component Test")
+    print("=========================================")
+    
+    # Test imports
+    import_success, runner_module = test_runner_imports()
+    if not import_success:
+        print("\n❌ Import test failed. Stopping further tests.")
+        return False
+    
+    # Test argument parser
+    parser_success = test_argument_parser(runner_module)
+    
+    # Test component loading
+    loading_success = test_component_loading(runner_module)
+    
+    # Overall test result
+    overall_success = import_success and parser_success and loading_success
+    
+    print("\n=========================================")
+    print(f"Overall Test Result: {'✅ PASSED' if overall_success else '❌ FAILED'}")
+    print("=========================================")
+    
+    return overall_success
+
+if __name__ == "__main__":
+    success = run_tests()
+    sys.exit(0 if success else 1) 
