@@ -14,12 +14,12 @@ psutil>=5.9.5
 
 # Web3 and blockchain dependencies
 web3>=6.0.0
-eth-brownie>=1.19.3
+# eth-brownie>=1.19.3 # Commenting out as it might cause installation issues
 eth-account>=0.8.0
 etherscan-python>=2.1.0
 
 # Browser automation
-browser-use>=0.2.8
+browser-use>=0.1.40
 playwright>=1.38.0
 urllib3>=2.0.0
 beautifulsoup4>=4.12.0
