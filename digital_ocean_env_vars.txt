@@ -1,0 +1,17 @@
+OPENAI_API_KEY=your_openai_api_key_here
+ETHERSCAN_API_KEY=your_etherscan_api_key_here
+INFURA_API_KEY=your_infura_api_key_here
+ALCHEMY_API_KEY=your_alchemy_api_key_here
+LLM_MODEL=gpt-4o
+LLM_TEMPERATURE=0.2
+PORT=8080
+DEBUG=false
+LOG_LEVEL=info
+BROWSER_HEADLESS=true
+SIMULATION_MODE=true
+ETH_NETWORK=mainnet
+WEB3_PROVIDER_URI=https://mainnet.infura.io/v3/your_infura_api_key_here
+MAX_POSITION_SIZE=0.1
+RISK_TOLERANCE=medium
+REBALANCE_FREQUENCY=weekly
+DO_APP_ENV=production 
