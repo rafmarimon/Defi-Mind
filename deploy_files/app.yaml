@@ -1,0 +1,15 @@
+name: defimind
+region: nyc
+services:
+- environment_slug: python
+  github:
+    branch: main
+    deploy_on_push: true
+    repo: rafmarimon/DefiMind
+  http_port: 8080
+  instance_count: 1
+  instance_size_slug: professional-xs
+  name: defimind-app
+  source_dir: /
+  build_command: pip install -r deploy_files/requirements.txt
+  run_command: python app.py 
